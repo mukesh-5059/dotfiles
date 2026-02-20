@@ -1,0 +1,362 @@
+/* * SWAYNC STYLE CONFIGURATION
+ * Optimized for Matugen & Hyprland - Elite DevOps Edition v9
+ */
+
+/* --- Colors from user-provided eww/colors.scss --- */
+ @define-color background color-mix(in srgb, #151618, #000000 75%);
+ @define-color foreground #DCE2E9;
+ @define-color cursor #9B908A;
+
+ @define-color color0 #3F4143;
+ @define-color color1 #44494F;
+ @define-color color2 #6E5D53;
+ @define-color color3 #56697B;
+ @define-color color4 #668098;
+ @define-color color5 #9C7A5E;
+ @define-color color6 #73828F;
+ @define-color color7 #C4CED7;
+ @define-color color8 #899096;
+ @define-color color9 #484F56;
+ @define-color color10 #7F695C;
+ @define-color color11 #607890;
+ @define-color color12 #5E87AC;
+ @define-color color13 #B27A4C;
+ @define-color color14 #9AADBF;
+ @define-color color15 #C4CED7;
+
+/* --- Semantic Mapping --- */
+ @define-color background-color @background;
+ @define-color text-color @foreground;
+ @define-color text-sub-color @color1;
+/* Using color5 as accent, it's a greenish-yellow from the user's palette */
+ @define-color accent-color @color5;
+ @define-color on-accent-color @background;
+ @define-color urgent-color @color9;
+ @define-color on-urgent-color @foreground;
+ @define-color hover-color @color0;
+ @define-color shadow-color #000000;
+
+
+/* --- Global Settings --- */
+* {
+  color: @text-color;
+  all: unset;
+  font-family: "Iosevka", "JetBrains Mono Nerd Font", "Fira Sans", sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  transition: 200ms ease-in-out;
+}
+
+.blank-window {
+  background: transparent;
+}
+
+/* --- CONTROL CENTER (Main Window) --- */
+.control-center {
+  background: @background-color;
+  border-radius: 24px;
+  /* FIXED: Border is now 2px thick and uses the Accent Color */
+  border: none;
+  box-shadow: none;
+  margin: 12px;
+  padding: 24px;
+}
+
+/* --- Notifications in Control Center --- */
+.control-center .notification-row .notification-background {
+  background-color: @background; /* Assuming @surface_container_low maps to color0 or similar */
+  border-radius: 16px;
+  margin: 6px 0px;
+  padding: 2px;
+  border: 1px solid @color8; /* Assuming @outline_variant maps to color8 or similar */
+}
+
+.control-center .notification-row .notification-background:hover {
+    background-color: @color1; /* Assuming @surface_container maps to color1 or similar */
+}
+
+/* Critical Notification Styling - FIXED RADIUS */
+.control-center .notification-row .notification-background .notification.critical {
+  background-color: @color9; /* Assuming @error_container maps to color9 or similar */
+  color: @foreground; /* Assuming @on_error_container maps to foreground or similar */
+  border: 1px solid @urgent-color;
+  border-radius: 12px;
+}
+
+.control-center .notification-row .notification-background .notification .notification-content {
+  margin: 4px;
+  padding: 4px;
+}
+
+.control-center .notification-row .notification-background .notification > *:last-child > * {
+  min-height: 0.5em;
+}
+
+/* Actions (Buttons inside notifications) */
+.control-center .notification-row .notification-background .notification > *:last-child > * .notification-action {
+  background: @color2; /* Assuming @secondary_container maps to color2 or similar */
+  color: @background; /* Assuming @on_secondary_container maps to background or similar */
+  border-radius: 12px;
+  margin: 6px;
+  border: 1px solid transparent;
+}
+
+.control-center .notification-row .notification-background .notification > *:last-child > * .notification-action:hover {
+  background: @accent-color;
+  color: @on-accent-color;
+  box-shadow: none;
+}
+
+/* Close Button */
+.control-center .notification-row .notification-background .close-button {
+  background: transparent;
+  border-radius: 6px;
+  color: @text-sub-color;
+  margin: 0px;
+  padding: 4px;
+}
+
+.control-center .notification-row .notification-background .close-button:hover {
+  background-color: @color9; /* Assuming @error_container maps to color9 or similar */
+  color: @foreground; /* Assuming @on_error_container maps to foreground or similar */
+}
+
+progressbar, progress, trough {
+  border-radius: 12px;
+}
+
+progressbar {
+  background-color: @color7; /* Assuming @surface_container_highest maps to color7 or similar */
+}
+
+/* --- FLOATING NOTIFICATIONS (Popups) --- */
+.notification-row {
+  outline: none;
+  margin: 0;
+  padding: 0px;
+}
+
+.floating-notifications.background .notification-row .notification-background {
+  background: @background-color;
+  box-shadow: none;
+  border: 0px;
+  border-radius: 18px;
+  margin: 8px;
+  padding: 0;
+}
+
+.floating-notifications.background .notification-row .notification-background .notification {
+  padding: 12px;
+  border-radius: 12px;
+}
+
+/* Critical Popup - FIXED RADIUS */
+.floating-notifications.background .notification-row .notification-background .notification.critical {
+  background-color: @color9; /* Assuming @error_container maps to color9 or similar */
+  color: @foreground; /* Assuming @on_error_container maps to foreground or similar */
+  border: 1px solid @urgent-color;
+  border-radius: 12px;
+}
+
+.floating-notifications.background .notification-row .notification-background .notification .notification-content {
+  margin: 7px;
+}
+
+.floating-notifications.background .notification-row .notification-background .notification > *:last-child > * {
+  min-height: 0.5em;
+}
+
+/* Floating Actions */
+.floating-notifications.background .notification-row .notification-background .notification > *:last-child > * .notification-action {
+  border-radius: 12px;
+  background-color: @color2; /* Assuming @secondary_container maps to color2 or similar */
+  color: @background; /* Assuming @on_secondary_container maps to background or similar */
+  margin: 6px;
+  border: 1px solid transparent;
+}
+
+.floating-notifications.background .notification-row .notification-background .notification > *:last-child > * .notification-action:hover {
+  background-color: @accent-color;
+  color: @on-accent-color;
+}
+
+.image {
+  margin: 10px 20px 10px 0px;
+  color: @text-color;
+}
+
+.summary {
+  font-weight: 800;
+  font-size: 1rem;
+  color: @accent-color;
+}
+
+.body {
+  font-size: 0.9rem;
+  color: @text-color;
+}
+
+.time {
+  color: @text-sub-color;
+  opacity: 0.8;
+}
+
+.floating-notifications.background .notification-row .notification-background .close-button {
+  margin: 6px;
+  padding: 2px;
+  border-radius: 6px;
+  background-color: transparent;
+  color: @text-sub-color;
+}
+
+.floating-notifications.background .notification-row .notification-background .close-button:hover {
+  background-color: @color9; /* Assuming @error_container maps to color9 or similar */
+  color: @foreground; /* Assuming @on_error_container maps to foreground or similar */
+}
+
+/* Progress bars in notifications */
+.notification.critical progress {
+  background-color: @foreground; /* Assuming @on_error_container maps to foreground or similar */
+}
+
+.notification.low progress,
+.notification.normal progress {
+  background-color: @accent-color;
+}
+
+/* --- WIDGETS --- */
+
+/* Title Widget */
+.widget-title {
+  color: @accent-color;
+  font-weight: 800;
+  font-size: 1.5rem;
+  margin: 8px 6px;
+}
+
+.widget-title button {
+  background: @color7; /* Assuming @surface_container_high maps to color7 or similar */
+  color: @text-sub-color;
+  border-radius: 6px;
+  padding: 4px 16px;
+  border: 1px solid transparent;
+  font-weight: normal;
+  font-size: 0.9rem;
+}
+
+.widget-title button:hover {
+  background-color: @accent-color;
+  color: @on-accent-color;
+}
+
+/* DND Widget */
+.widget-dnd {
+  color: @accent-color;
+  font-weight: 800;
+  margin: 6px;
+  font-size: 1.2rem;
+}
+
+.widget-dnd > switch {
+  background: @color7; /* Assuming @surface_container_highest maps to color7 or similar */
+  border-radius: 8px;
+  box-shadow: none;
+  padding: 2px;
+  border: 1px solid @color8; /* Assuming @outline maps to color8 or similar */
+}
+
+.widget-dnd > switch:hover {
+  background: @color7; /* Assuming @surface_container_high maps to color7 or similar */
+}
+
+.widget-dnd > switch:checked {
+  background: @accent-color;
+  border: 1px solid @accent-color;
+}
+
+.widget-dnd > switch slider {
+  background: @color8; /* Assuming @outline maps to color8 or similar */
+  border-radius: 6px;
+}
+
+.widget-dnd > switch:checked slider {
+  background: @on-accent-color;
+}
+
+/* Buttons Grid */
+.widget-buttons-grid {
+  font-size: x-large;
+  padding: 6px;
+  margin: 6px;
+  border-radius: 12px;
+  background: color-mix(in srgb, @background, @color5 15%);
+}
+
+.widget-buttons-grid>flowbox>flowboxchild>button {
+  margin: 2px 4px;
+  padding: 6px 8px;
+  background: transparent;
+  border-radius: 8px;
+  color: @text-color;
+  transition: all 0.2s ease;
+}
+
+.widget-buttons-grid>flowbox>flowboxchild>button:hover {
+  background: @accent-color;
+  color: @on-accent-color;
+}
+
+/* Volume & Backlight */
+.widget-volume, .widget-backlight {
+    background: @color0; /* Assuming @surface_container_low maps to color0 or similar */
+    padding: 8px;
+    margin: 6px;
+    border-radius: 12px;
+}
+
+.widget-volume label, .widget-backlight label {
+    font-size: 20px;
+    margin-right: 15px;
+    color: @text-color;
+}
+
+/* Sliders */
+scale trough {
+    min-height: 6px;
+    border-radius: 12px;
+    background-color: @color7; /* Assuming @surface_container_highest maps to color7 or similar */
+}
+
+scale trough highlight {
+    border-radius: 12px;
+    background-color: @accent-color;
+}
+
+/* Target the "No Notifications" placeholder */
+.notification-placeholder,
+.notification-placeholder label {
+  color: @text-sub-color;
+}
+
+/* --- EMPTY STATE / "NO NOTIFICATIONS" FIX --- */
+/* Force ALL labels/icons in the notification box to be Accent Color. */
+.widget-notifications label {
+  color: @accent-color;
+  opacity: 1;
+}
+
+.widget-notifications image,
+.widget-notifications .icon {
+  color: @accent-color;
+}
+
+/* RESET: Set text colors back to normal for ACTUAL notifications. */
+.widget-notifications .notification-row label,
+.widget-notifications .notification-row .summary {
+  color: @text-color;
+}
+
+.widget-notifications .notification-row .body,
+.widget-notifications .notification-row .time {
+  color: @text-sub-color;
+}
