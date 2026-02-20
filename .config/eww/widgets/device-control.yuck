@@ -106,10 +106,10 @@
         :halign "start"
         :vexpand "false"
         :hexpand "false"
-        (wifi-control)
-        (bluetooth-control)
-        (idle-control)
-        (screenshot-control)))
+        (performance-mode-power-saver)
+        (performance-mode-balanced)
+        (performance-mode-performance)
+        (sleep-control)))
 
 ;; Controls Group ;;
 (defwidget controls []
@@ -143,7 +143,7 @@
                       :width "10%"
                       :height "0%"
                       :anchor "top right")
-  :stacking "bg"
+  :stacking "fg"
   :exclusive "false"
   :focusable "false"
   (controls))
