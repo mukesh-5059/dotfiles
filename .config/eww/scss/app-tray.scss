@@ -1,0 +1,14 @@
+.app-tray {
+  margin-left: 10px;
+}
+
+.app-icon {
+  font-size: 14px;
+  padding: 0 5px;
+  background-color: mix($background, $color1, 90%);
+  border-radius: 5px;
+}
+
+.app-icon:hover {
+  background-color: mix($background, $color1, 80%);
+}

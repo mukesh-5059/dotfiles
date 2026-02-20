@@ -4,6 +4,7 @@
 
 # Quit running eww bar instances
 killall eww
- 
+swaync-client -R
+swaync-client -rs
 # Start eww bar
-eww open side-bar 
+eww open bar 

@@ -20,7 +20,7 @@
 # Whether to set CPU% on a process to be based on the total CPU or per-core CPU% (not divided by the number of cpus).
 #unnormalized_cpu = false
 # Whether to group processes with the same name together by default.
-#group_processes = false
+group_processes = true
 # Whether to make process searching case sensitive by default.
 #case_sensitive = false
 # Whether to make process searching look for matching the entire word by default.
@@ -52,13 +52,13 @@
 # Remove space in tables
 #hide_table_gap = false
 # Show the battery widgets
-#battery = false
+battery = true
 # Disable mouse clicks
 #disable_click = false
 # Built-in themes.  Valid values are "default", "default-light", "gruvbox", "gruvbox-light", "nord", "nord-light"
 #color = "default"
 # Show memory values in the processes widget as values by default
-#mem_as_value = false
+process_memory_as_value = true
 # Show tree mode by default in the processes widget.
 #tree = false
 # Shows an indicator in table widgets tracking where in the list you are.
@@ -74,7 +74,7 @@
 # Hides advanced options to stop a process on Unix-like systems.
 #disable_advanced_kill = false
 # Shows GPU(s) memory
-#enable_gpu_memory = false
+enable_gpu_memory = true
 # Shows cache and buffer memory
 #enable_cache_memory = false
 # How much data is stored at once in terms of time.
@@ -83,7 +83,7 @@
 # These are flags around the process widget.
 
 #[processes]
-#columns = ["PID", "Name", "CPU%", "Mem%", "R/s", "W/s", "T.Read", "T.Write", "User", "State"]
+columns = ["PID", "Name", "CPU%", "Mem%", "R/s", "W/s", "T.Read", "T.Write", "User", "State"]
 
 # These are all the components that support custom theming.  Note that colour support
 # will depend on terminal support.

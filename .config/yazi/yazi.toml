@@ -23,8 +23,8 @@ ueberzug_offset = [0, 0, 0, 0]
 [opener]
 edit = [
   # editor
-  { run = 'nvim "$@"', block = true, for = "unix" },
-  { run = 'code "$@"', block = true, for = "unix" },
+  { run = 'codium "$@"', block = true, for = "unix" },
+  { run = 'codium "$@"', block = true, for = "unix" },
   { run = 'code "%*"', orphan = true, for = "windows" },
 ]
 open = [
@@ -46,7 +46,7 @@ extract = [
 ]
 play = [
   # media
-  { run = 'vlc "$@"', orphan = true, for = "unix" },
+  { run = 'mpv "$@"', orphan = true, for = "unix" },
   { run = 'vlc "%1"', orphan = true, for = "windows" },
   { run = '''mediainfo "$1"; echo "Press enter to exit"; read''', block = true, desc = "Show media info", for = "unix" },
 ]

@@ -1,0 +1,49 @@
+.volume-popup {
+  background-color: $background;
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.volume-control { 
+  background-color: mix($background, $color1, 90%);
+  padding: 4px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  font-size: 16px;
+  min-width: 16px;
+}
+
+.volume-icon-control {
+  margin: 0 10px 0 6px;
+}
+
+.volume-control-bar trough {
+  background-color: mix($background, $foreground, 80%);
+  border-radius: 5px;
+  min-height: 8px;
+  min-width: 170px;
+  margin: 6px 0;
+}
+
+.volume-control-bar trough highlight {
+  min-height: 8px;
+  background-color: mix($color5, $foreground, 90%);
+  border-radius: 5px;
+}
+
+.sinks-title {
+  font-weight: bold;
+  font-size: 1.1em;
+  margin-bottom: 5px;
+}
+
+.sink-button {
+  background-color: mix($background, $color1, 85%);
+  border-radius: 5px;
+  padding: 5px 10px;
+  transition: background-color 0.3s ease;
+}
+
+.sink-button:hover {
+  background-color: mix($background, $color1, 75%);
+}

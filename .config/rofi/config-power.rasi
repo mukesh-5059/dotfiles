@@ -8,7 +8,7 @@
 
 configuration {
     modi:                       "drun,run";
-    font:                       "Font Awesome 6 Free 24";
+    font:                       "Iosevka 24";
 }
 
 window {

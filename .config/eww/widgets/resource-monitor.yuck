@@ -96,8 +96,8 @@
                       :y "175px"
                       :width "10%"
                       :height "0%"
-                      :anchor "top right")
-  :stacking "bg"
+                      :anchor "top left")
+  :stacking "fg"
   :exclusive "false"
   :focusable "false"
   (resources))

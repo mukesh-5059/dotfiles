@@ -1,5 +1,5 @@
 .main-bar {
-  background-color: mix($background, $foreground, 95%);
+  background-color: mix($background, $color1, 90%);
   padding: 5px;
   border-radius: 12px;
 }
@@ -124,6 +124,15 @@
   padding: 0 12px 0 4px;
 }
 
+.bluetooth-icon{
+  color: mix($color4, $foreground, 90%);
+  font-size: 1.1rem;
+}
+
+.bluetooth{
+  padding: 0 10px 0 4px;
+}
+
 .batterybar{
   margin: 0 0 0 12px;
   color: mix($color3, $foreground, 90%);
@@ -190,6 +199,11 @@ tooltip.background{
 
 .wifi-label{
   color: mix($color2, $foreground, 90%);
+  margin: 0 0 0 12px;
+}
+
+.bluetooth-label{
+  color: mix($color4, $foreground, 90%);
   margin: 0 0 0 12px;
 }
 

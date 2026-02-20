@@ -1,5 +1,6 @@
+backend = "wal"
 palette = 'dark16'
-theshold = 70
+theshold = 20
 check_contrast = true
 
 [templates]
@@ -17,3 +18,9 @@ kitty.target = '~/.config/kitty/kitty-colors.conf'
 
 lush.template = 'lush-colors.json'
 lush.target = '~/.config/nvim/colors/lush-colors.json'
+
+swaync.template = 'swaync-colors.css'
+swaync.target = '~/.config/swaync/style.css'
+
+vscode = { src = 'vscode.json', dst = '~/.cache/wallust/colors.json' }
+vscode2 = { src = 'vscode', dst = '~/.cache/wallust/colors' }

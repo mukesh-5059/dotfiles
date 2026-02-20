@@ -7,8 +7,8 @@
 
 (defwindow custom-calendar
   :monitor 0
-  :geometry (geometry :x "0.8%" :y "475px" :anchor "top right")
-  :stacking "bg"
+  :geometry (geometry :x "0.8%" :y "475px" :anchor "top left")
+  :stacking "fg"
   :focusable false
   (calendar-widget))
 

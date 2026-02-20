@@ -1,0 +1,80 @@
+// https://github.com/gh0stzk/dotfiles
+
+configuration {
+    modi:                        "drun";
+    show-icons:                  true;
+    drun-display-format:         "{name}";
+    font:                        "Iosevka NF Bold 9";
+}
+
+@import "rofi-dark-colors.rasi"
+
+window {
+    enabled:                     true;
+    fullscreen:                  false;
+    transparency:                "real";
+    cursor:                      "default";
+    spacing:                     0px;
+    padding:                     0px;
+    border:                      0px;
+    border-radius:               20px;
+    border-color:                transparent;
+    background-color:            transparent;
+}
+
+mainbox {
+    enabled:                     true;
+    children:                    [ "listview" ];
+    background-color:            @alternate-normal-background;
+}
+
+listview {
+    enabled:                     true;
+    columns:                     3;
+    lines:                       1;
+    spacing:                     0px;
+    padding:                     20px 30px;
+    cycle:                       true;
+    dynamic:                     false;
+    scrollbar:                   false;
+    layout:                      vertical;
+    reverse:                     false;
+    fixed-height:                true;
+    fixed-columns:               true;
+    cursor:                      "default";
+    background-color:            transparent;
+    text-color:                  @normal-foreground;
+}
+
+element {
+    enabled:                     true;
+    spacing:                     0px;
+    padding:                     0px;
+    border-radius:               20px;
+    cursor:                      pointer;
+    background-color:            transparent;
+    text-color:                  @normal-foreground;
+}
+
+
+
+element selected.normal {
+    background-color:            @selected-normal-background;
+    text-color:                  @selected-normal-foreground;
+}
+
+element-icon {
+    size:                        20%;
+    cursor:                      inherit;
+    background-color:            transparent;
+    text-color:                  inherit;
+}
+
+element-text {
+    vertical-align:              0.5;
+    horizontal-align:            0;
+    font: "Iosevka NF Bold 50";
+    cursor:                      inherit;
+    background-color:            transparent;
+    text-color:                  inherit;
+}

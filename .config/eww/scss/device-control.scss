@@ -4,10 +4,10 @@
   border-radius: 12px;
 }
 
-.screenshot-control,
-.wifi-control,
-.bluetooth-control,
-.idle-control {
+.performance-control,
+.balanced-control,
+.power-saver-control,
+.sleep-control {
   background-color: mix($background, $color1, 90%);
   padding: 10px;
   border-radius: 8px;
@@ -27,16 +27,17 @@
   min-width: 16px;
 }
 
-.screenshot-control:hover,
-.wifi-control:hover,
-.bluetooth-control:hover,
-.idle-control:hover {
+.performance-control:hover,
+.balanced-control:hover,
+.power-saver-control:hover,
+.sleep-control:hover {
   background-color: mix($background, $color1, 80%);
 }
 
-.screenshot-icon-control,
-.wifi-icon-control,
-.idle-icon-control {
+.performance-icon-control,
+.balanced-icon-control,
+.power-saver-icon-control,
+.sleep-icon-control {
   margin: 0 10px 0 4px;
 }
 
@@ -65,3 +66,10 @@
   border-radius: 5px;
 }
 
+.sleep-control.active,
+.performance-control.active,
+.balanced-control.active,
+.power-saver-control.active {
+  background-color: $foreground;
+  color: $background;
+}

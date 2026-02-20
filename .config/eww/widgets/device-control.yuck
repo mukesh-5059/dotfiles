@@ -1,11 +1,38 @@
-;; Wifi ;;
-(defwidget wifi-control []
+;; Power Saver ;;
+(defwidget performance-mode-power-saver []
   (eventbox :cursor "pointer"
-  (box  :class "wifi-control"
+  (box  :class "power-saver-control ${current_power_profile == "power-saver" ? "active" : ""}"
         :orientation "vertical"
         :space-evenly "false"
-    (button :class "wifi-icon-control"
-            :onclick "~/.config/eww/scripts/wifi-menu.sh" wifi-strength))))
+    (button :class "power-saver-icon-control"
+            :onclick "~/.config/eww/scripts/set-power-profile.sh --profile power-saver" ""))))
+
+;; Balanced ;;
+(defwidget performance-mode-balanced []
+  (eventbox :cursor "pointer"
+  (box  :class "balanced-control ${current_power_profile == "balanced" ? "active" : ""}"
+        :orientation "vertical"
+        :space-evenly "false"
+    (button :class "balanced-icon-control"
+            :onclick "~/.config/eww/scripts/set-power-profile.sh --profile balanced" ""))))
+
+;; Performance ;;
+(defwidget performance-mode-performance []
+  (eventbox :cursor "pointer"
+  (box  :class "performance-control ${current_power_profile == "performance" ? "active" : ""}"
+        :orientation "vertical"
+        :space-evenly "false"
+    (button :class "performance-icon-control"
+            :onclick "~/.config/eww/scripts/set-power-profile.sh --profile performance" ""))))
+
+;; Sleep ;;
+(defwidget sleep-control []
+  (eventbox :cursor "pointer"
+  (box  :class "sleep-control ${idle == "false" ? "" : "active"}"
+        :orientation "vertical"
+        :space-evenly "false"
+    (button :class "sleep-icon-control"
+            :onclick "~/.config/eww/scripts/toggle-idle.sh" {idle ? "" : ""}))))
 
 ;; Volume ;;
 (defwidget volume-control []
@@ -45,33 +72,6 @@
                :max 101
                :min 0
                :onchange "brightnessctl s {}%")))
-
-;; Bluetooth ;;
-(defwidget bluetooth-control []
-  (eventbox :cursor "pointer"
-  (box  :class "bluetooth-control"
-        :orientation "vertical"
-        :space-evenly "false"
-    (button :class "bluetooth-icon-control"
-            :onclick "~/.config/eww/scripts/bluetuith.sh" bluetooth-status))))
-
-;; Idle ;;
-(defwidget idle-control []
-  (eventbox :cursor "pointer"
-  (box  :class "idle-control"
-        :orientation "vertical"
-        :space-evenly "false"
-    (button :class "idle-icon-control"
-            :onclick "~/.config/eww/scripts/toggle-idle.sh" {idle ? "" : ""  }))))
-
-;; Screenshot ;;
-(defwidget screenshot-control []
-  (eventbox :cursor "pointer"
-  (box  :class "screenshot-control"
-        :orientation "vertical"
-        :space-evenly "false"
-    (button :class "screenshot-icon-control"
-            :onclick "sh ~/scripts/screenshot.sh &" ""))))
 
 ;; Volume Group ;;
 (defwidget volume-controls []
@@ -142,7 +142,7 @@
                       :y "16px"
                       :width "10%"
                       :height "0%"
-                      :anchor "top right")
+                      :anchor "top left")
   :stacking "fg"
   :exclusive "false"
   :focusable "false"

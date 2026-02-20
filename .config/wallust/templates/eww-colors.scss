@@ -1,5 +1,5 @@
   /* Special */
-$background: {{background}};
+$background: mix({{background}}, #000000, 25%);
 $foreground: {{foreground}};
 $cursor: {{cursor}};
 

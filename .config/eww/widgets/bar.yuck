@@ -31,11 +31,11 @@
                 :space-evenly "true"
                 :spacing "16"
             (button :class "prev"
-                    :onclick "playerctl --player=ncspot previous" "")
+                    :onclick "playerctl previous" "")
             (button :class "pause"
-                    :onclick "playerctl --player=ncspot play-pause" "")
+                    :onclick "playerctl play-pause" "")
             (button :class "next"
-                    :onclick "playerctl --player=ncspot next" "")))))))
+                    :onclick "playerctl next" "")))))))
 
 
 ;; button test ;;
@@ -117,6 +117,23 @@
               (button :onclick "~/.config/eww/scripts/wifi-menu.sh"
               (label  :class "wifi-label"
                       :text current-wifi))))))
+
+;; Bluetooth ;;
+(defwidget bluetooth []
+  (eventbox :onhover "${eww} update bluetooth=true"
+            :onhoverlost "${eww} update bluetooth=false"
+            :cursor "pointer"
+            :onclick "/home/mukes/scripts/rofi_scripts/rofi-bluetooth > /tmp/bluetooth_debug.log 2>&1"
+            :tooltip "Connected to ${current-bluetooth}"
+  (box  :class "bluetooth"
+        :orientation "horizontal"
+        :space-evenly "false"
+    (button :class "bluetooth-icon" bluetooth-status)
+    (revealer :transition "slideright"
+              :reveal bluetooth
+              :duration "300ms"
+      (label  :class "bluetooth-label"
+              :text current-bluetooth)))))
 
 ;; Volume ;;
 (defwidget volume []
@@ -243,6 +260,7 @@
     (battery)
     (brightness)
     (volume)
+    (bluetooth)
     (wifi)
     (clock)))
 

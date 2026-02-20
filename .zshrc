@@ -30,6 +30,7 @@ alias ls="eza --color=always --long --git --no-permissions --icons=always"
 alias speed="speedtest-cli"
 alias spot="ncspot"
 alias y="yazi"
+alias cd="z"
 
 # fastfetch only in interactive shells, and only once per session
 if [[ -o interactive && -z "$FASTFETCH_RAN" ]]; then
@@ -37,3 +38,6 @@ if [[ -o interactive && -z "$FASTFETCH_RAN" ]]; then
   fastfetch
 fi
 source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
+source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
+
+export PATH=$PATH:/home/mukes/.spicetify
