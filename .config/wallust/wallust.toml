@@ -10,17 +10,14 @@ eww.target = '~/.config/eww/colors.scss'
 rofi.template = 'rofi-dark-colors.rasi'
 rofi.target = '~/.config/rofi/rofi-dark-colors.rasi'
 
-vim.template = 'vim-colors.vim'
-vim.target = '~/.config/nvim/colors/vim-colors.vim'
-
-kitty.template = 'kitty-colors.conf'
-kitty.target = '~/.config/kitty/kitty-colors.conf'
-
-lush.template = 'lush-colors.json'
-lush.target = '~/.config/nvim/colors/lush-colors.json'
+#kitty.template = 'kitty-colors.conf'
+#kitty.target = '~/.config/kitty/kitty-colors.conf'
 
 swaync.template = 'swaync-colors.css'
 swaync.target = '~/.config/swaync/style.css'
+
+swayosd.template = 'swayosd.css'
+swayosd.target = '~/.config/swayosd/style.css'
 
 vscode = { src = 'vscode.json', dst = '~/.cache/wallust/colors.json' }
 vscode2 = { src = 'vscode', dst = '~/.cache/wallust/colors' }

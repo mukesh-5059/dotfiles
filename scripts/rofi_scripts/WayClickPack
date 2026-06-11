@@ -1,0 +1,120 @@
+#!/usr/bin/env bash
+
+# WayClick Smart Controller + Sprite Slicer (V4)
+# If running: Kill immediately (Silent)
+# If stopped: Show pack selection and start
+
+CONFIG_DIR="$HOME/.config/wayclick"
+CACHE_ROOT="$HOME/.cache/wayclick"
+WAYCLICK_SCRIPT="$(readlink -f "$HOME/scripts/wayclick.sh")"
+ROFI_THEME="$HOME/.config/rofi/wayclick.rasi"
+
+# 1. Check if running
+if pgrep -f "runner.py" >/dev/null; then
+    pkill -f "runner.py"
+    notify-send -a "WayClick" -i "dialog-warning-symbolic" "WayClick" "Engine Stopped"
+    exit 0
+fi
+
+# 2. Engine is stopped, show pack selection
+PACKS=""
+for d in "$CONFIG_DIR"/*/; do
+    if [ -d "$d" ]; then
+        pack_name=$(basename "$d")
+        [[ "$pack_name" == "icons" || "$pack_name" == "scripts" ]] && continue
+        PACKS+="${pack_name}\n"
+    fi
+done
+
+PACKS=$(echo -e "$PACKS" | sed '/^$/d')
+
+if [[ -z "$PACKS" ]]; then
+    notify-send -u critical "WayClick" "No packs found in $CONFIG_DIR"
+    exit 1
+fi
+
+# 3. Launch Rofi
+CURRENT_PACK=$(grep 'readonly ACTIVE_PACK=' "$WAYCLICK_SCRIPT" | cut -d'"' -f2)
+CHOICE=$(echo -e "$PACKS" | rofi -dmenu \
+    -p "Select Sound Pack" \
+    -theme "$ROFI_THEME" \
+    -mesg "Last used: $CURRENT_PACK")
+
+if [[ -z "$CHOICE" ]]; then
+    exit 0
+fi
+
+# 4. Sprite Slicing (The Magic Part)
+SELECTED_DIR="${CONFIG_DIR}/${CHOICE}"
+CONFIG_JSON="${SELECTED_DIR}/config.json"
+
+# Check if it's a 'single' type sprite pack
+if grep -q '"key_define_type"[[:space:]]*:[[:space:]]*"single"' "$CONFIG_JSON"; then
+    CACHE_DIR="${CACHE_ROOT}/${CHOICE}"
+    
+    # Check if cache is valid (has at least some wav files)
+    WAV_COUNT=$(ls -1 "$CACHE_DIR"/*.wav 2>/dev/null | wc -l)
+    
+    if [[ "$WAV_COUNT" -eq 0 ]]; then
+        notify-send "WayClick" "Pre-slicing sprite pack: $CHOICE..."
+        mkdir -p "$CACHE_DIR"
+        
+        # We need dependencies
+        for dep in jq bc ffmpeg; do
+            command -v $dep &>/dev/null || { notify-send -u critical "Error" "Missing dependency: $dep"; exit 1; }
+        done
+        
+        SOUND_FILE=$(jq -r '.sound' "$CONFIG_JSON")
+        INPUT_FILE="${SELECTED_DIR}/${SOUND_FILE}"
+        
+        if [[ ! -f "$INPUT_FILE" ]]; then
+            notify-send -u critical "Error" "Source sound file not found: $SOUND_FILE"
+            exit 1
+        fi
+        
+        # Build new config
+        echo '{ "mappings": {' > "${CACHE_DIR}/config.json"
+        
+        echo "[DEBUG] Starting slice for $CHOICE..."
+        
+        count=0
+        while IFS=$'\t' read -r key start duration; do
+            # Filter out nulls and empty lines
+            [[ -z "$key" || "$start" == "null" || "$duration" == "null" ]] && continue
+            
+            outfile="key_${key}.wav"
+            
+            # Simple math for seconds (start/1000, duration/1000)
+            # Add leading zero if bc omitted it (e.g. .069 -> 0.069)
+            start_s=$(echo "scale=4; $start / 1000" | bc | sed 's/^\./0./;s/^-\./-0./')
+            dur_s=$(echo "scale=4; $duration / 1000" | bc | sed 's/^\./0./;s/^-\./-0./')
+            
+            # Use fast seek (-ss before -i)
+            ffmpeg -y -hide_banner -loglevel error \
+                -ss "$start_s" -i "$INPUT_FILE" -t "$dur_s" \
+                -c:a pcm_s16le "${CACHE_DIR}/${outfile}"
+            
+            # Check if file was created
+            if [[ -f "${CACHE_DIR}/${outfile}" ]]; then
+                [[ $count -gt 0 ]] && echo "," >> "${CACHE_DIR}/config.json"
+                echo "\"$key\": \"$outfile\"" >> "${CACHE_DIR}/config.json"
+                count=$((count + 1))
+            fi
+        done < <(jq -r '.defines | to_entries[] | "\(.key)\t\(.value[0])\t\(.value[1])"' "$CONFIG_JSON")
+        
+        echo "}, \"defaults\": [\"key_1.wav\"] }" >> "${CACHE_DIR}/config.json"
+        
+        if [[ "$count" -gt 0 ]]; then
+            notify-send "WayClick" "Slicing complete: $CHOICE ($count files)"
+        else
+            notify-send -u critical "WayClick" "Slicing failed: No files generated."
+            rm -rf "$CACHE_DIR"
+            exit 1
+        fi
+    fi
+fi
+
+# 5. Update and Start
+sed -i "s/^readonly ACTIVE_PACK=.*/readonly ACTIVE_PACK=\"$CHOICE\"/" "$WAYCLICK_SCRIPT"
+notify-send -a "WayClick" -i "input-mouse-symbolic" "WayClick" "Starting $CHOICE..."
+sh "$WAYCLICK_SCRIPT"

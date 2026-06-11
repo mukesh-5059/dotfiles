@@ -24,7 +24,7 @@
 # =============================================================
 
 # Set some variables
-wall_dir="$HOME/wallpapers"
+wall_dir="$HOME/modified-zenities/wallpapers"
 cacheDir="$HOME/.cache/wallselect"
 
 # Create cache dir if not exists

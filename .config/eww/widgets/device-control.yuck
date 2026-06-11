@@ -1,38 +1,39 @@
 ;; Power Saver ;;
 (defwidget performance-mode-power-saver []
   (eventbox :cursor "pointer"
-  (box  :class "power-saver-control ${current_power_profile == "power-saver" ? "active" : ""}"
-        :orientation "vertical"
-        :space-evenly "false"
-    (button :class "power-saver-icon-control"
-            :onclick "~/.config/eww/scripts/set-power-profile.sh --profile power-saver" ""))))
+            :onclick "~/.config/eww/scripts/set-power-profile.sh --profile power-saver"
+    (box :class "power-saver-control ${current_power_profile == 'power-saver' ? 'active' : ''}"
+         :orientation "vertical"
+         :space-evenly "false"
+      (label :class "power-saver-icon-control" :text ""))))
 
 ;; Balanced ;;
 (defwidget performance-mode-balanced []
   (eventbox :cursor "pointer"
-  (box  :class "balanced-control ${current_power_profile == "balanced" ? "active" : ""}"
-        :orientation "vertical"
-        :space-evenly "false"
-    (button :class "balanced-icon-control"
-            :onclick "~/.config/eww/scripts/set-power-profile.sh --profile balanced" ""))))
+            :onclick "~/.config/eww/scripts/set-power-profile.sh --profile balanced"
+    (box :class "balanced-control ${current_power_profile == 'balanced' ? 'active' : ''}"
+         :orientation "vertical"
+         :space-evenly "false"
+      (label :class "balanced-icon-control" :text ""))))
 
 ;; Performance ;;
 (defwidget performance-mode-performance []
   (eventbox :cursor "pointer"
-  (box  :class "performance-control ${current_power_profile == "performance" ? "active" : ""}"
-        :orientation "vertical"
-        :space-evenly "false"
-    (button :class "performance-icon-control"
-            :onclick "~/.config/eww/scripts/set-power-profile.sh --profile performance" ""))))
+            :onclick "~/.config/eww/scripts/set-power-profile.sh --profile performance"
+    (box :class "performance-control ${current_power_profile == 'performance' ? 'active' : ''}"
+         :orientation "vertical"
+         :space-evenly "false"
+      (label :class "performance-icon-control" :text ""))))
 
-;; Sleep ;;
+;; Sleep (Idle Toggle) ;;
 (defwidget sleep-control []
   (eventbox :cursor "pointer"
-  (box  :class "sleep-control ${idle == "false" ? "" : "active"}"
-        :orientation "vertical"
-        :space-evenly "false"
-    (button :class "sleep-icon-control"
-            :onclick "~/.config/eww/scripts/toggle-idle.sh" {idle ? "" : ""}))))
+            :onclick "~/.config/eww/scripts/toggle-idle.sh"
+    (box :class "sleep-control ${idle == 'false' ? '' : 'active'}"
+         :orientation "vertical"
+         :space-evenly "false"
+      (label :class "sleep-icon-control" 
+             :text "${idle == 'true' ? '' : ''}"))))
 
 ;; Volume ;;
 (defwidget volume-control []

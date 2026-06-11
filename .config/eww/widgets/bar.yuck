@@ -114,11 +114,11 @@
     (revealer :transition "slideright"
               :reveal wifi
               :duration "300ms"
-              (button :onclick "~/.config/eww/scripts/wifi-menu.sh"
+              (button :onclick "hyprctl dispatch exec '[float; size 700 600; center] kitty -e wlctl'"
               (label  :class "wifi-label"
                       :text current-wifi))))))
 
-;; Bluetooth ;;
+;; Bluetooth :onclick "hyprctl dispatch exec '[float; size 700 600; center] kitty -e bluetui'";;
 (defwidget bluetooth []
   (eventbox :onhover "${eww} update bluetooth=true"
             :onhoverlost "${eww} update bluetooth=false"
@@ -136,6 +136,7 @@
               :text current-bluetooth)))))
 
 ;; Volume ;;
+;; Volume ;;
 (defwidget volume []
   (eventbox :onhover "${eww} update volume=true"
             :onhoverlost "${eww} update volume=false"
@@ -145,16 +146,18 @@
           :orientation "horizontal"
           :space-evenly "false"
           :spacing "2"
-      (button :class "volume-icon" volume-icon)
+      (button :class "volume-icon" 
+              :onclick "hyprctl dispatch exec '[float; size 700 600; center] kitty -e wiremix'"
+              volume-icon)
       (revealer :transition "slideleft"
                 :reveal volume
                 :duration "300ms"
         (scale :class "volbar"
-               :value current-volume
-               :orientation "horizontal"
-               :max 101
-               :min 0
-               :onchange "pactl set-sink-volume @DEFAULT_SINK@ {}%")))))
+                :value current-volume
+                :orientation "horizontal"
+                :max 101
+                :min 0
+                :onchange "pactl set-sink-volume @DEFAULT_SINK@ {}%")))))
 
 ;; Brightness ;;
 (defwidget brightness []
@@ -212,14 +215,59 @@
                        :class "memorybar"
                        :thickness 4
       (button :class "memory-icon"
-              :tooltip "memory used: ${current-memory}%"
+              :tooltip "memory used: ${current-memory-detail}"
               ""))
       (revealer :transition "slideleft"
                 :reveal memory
                 :duration "300ms"
         (label  :class "memory-label"
-                :tooltip "memory used: ${current-memory}%"
+                :tooltip "memory used: ${current-memory-detail}"
                 :text "${current-memory}%")))))
+
+;; CPU ;;
+(defwidget cpu []
+(eventbox :onhover "${eww} update cpu=true"
+          :onhoverlost "${eww} update cpu=false"
+  (box  :class "cpu"
+        :orientation "horizontal"
+        :space-evenly "false"
+    (circular-progress :value current-cpu
+                       :class "cpubar"
+                       :thickness 4
+      (button :class "cpu-icon"
+              :tooltip "cpu usage: ${current-cpu}%"
+              ""))
+      (revealer :transition "slideleft"
+                :reveal cpu
+                :duration "300ms"
+        (label  :class "cpu-label"
+                :tooltip "cpu usage: ${current-cpu}%"
+                :text "${current-cpu}%")))))
+
+;; GPU ;;
+(defwidget gpu []
+(eventbox :onhover "${eww} update gpu=true"
+          :onhoverlost "${eww} update gpu=false"
+  (box  :class "gpu"
+        :orientation "horizontal"
+        :space-evenly "false"
+    (circular-progress :value current-gpu
+                       :class "gpubar"
+                       :thickness 4
+      (button :class "gpu-icon"
+              :tooltip "GPU usage: ${current-gpu}% | VRAM: ${current-vram-detail}"
+              ""))
+      (revealer :transition "slideleft"
+                :reveal gpu
+                :duration "300ms"
+        (box :orientation "horizontal"
+             :space-evenly "false"
+          (label  :class "gpu-label"
+                  :tooltip "GPU usage: ${current-gpu}%"
+                  :text "G:${current-gpu}%")
+          (label  :class "vram-label"
+                  :tooltip "VRAM usage: ${current-vram}% (${current-vram-detail})"
+                  :text "V:${current-vram}%"))))))
 
 ;; Calendar Widget ;;
 (defwidget cal []
@@ -256,6 +304,8 @@
         :halign "end"
         :vexpand "false"
         :hexpand "false"
+    (gpu)
+    (cpu)
     (memory)
     (battery)
     (brightness)

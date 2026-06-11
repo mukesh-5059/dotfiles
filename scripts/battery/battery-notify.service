@@ -1,0 +1,11 @@
+[Unit]
+Description=User Battery Notification Script
+After=graphical-session.target
+
+[Service]
+ExecStart=/home/mukes/scripts/battery_notify.sh
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

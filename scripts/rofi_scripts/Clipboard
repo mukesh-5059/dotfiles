@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Interface for cliphist and rofi
+
+rofi_cmd() {
+    rofi -dmenu \
+        -p "Clipboard" \
+        -config "$HOME/.config/rofi/Clipboard.rasi"
+}
+
+chosen=$(cliphist list | rofi_cmd)
+
+if [ -n "$chosen" ]; then
+    echo "$chosen" | cliphist decode | wl-copy
+fi

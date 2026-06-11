@@ -73,8 +73,9 @@ textbox-prompt-colon {
 
 entry {
     enabled:                     true;
-    expand:                      false;
+    expand:                      true;
     border-radius:               6px;
+    padding:                     8px 10px;
     background-color:            @alternate-normal-background;
     text-color:                  inherit;
     cursor:                      text;

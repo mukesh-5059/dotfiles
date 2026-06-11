@@ -10,7 +10,6 @@ export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
 export PATH=$PATH:$ANDROID_HOME/emulator
 export PATH=$PATH:$ANDROID_HOME/platform-tools
 #export PATH=$PATH:/opt/apache-spark/bin
-
 export JAVA_HOME="/usr/lib/jvm/java-11-openjdk"
 export PATH="$JAVA_HOME/bin:$PATH"
 

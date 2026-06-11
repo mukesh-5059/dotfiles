@@ -11,11 +11,21 @@ trap cleanup EXIT INT TERM
 
 # --- CONFIGURATION ---
 readonly APP_NAME="wayclick"
+readonly ACTIVE_PACK="audio_pack_1"
+readonly CONFIG_VOLUME="0.8"               # Sound volume (0.0 to 1.0)
 readonly CONFIG_ENABLE_TRACKPADS="false"  # Set to "true" to enable trackpad clicks, "false" to ignore them
 readonly BASE_DIR="$HOME/contained_apps/uv/$APP_NAME"
 readonly VENV_DIR="$BASE_DIR/.venv"
 readonly RUNNER_SCRIPT="$BASE_DIR/runner.py"
-readonly CONFIG_DIR="$HOME/.config/wayclick"
+
+# Support for pre-sliced sprite packs
+if [[ -d "$HOME/.cache/wayclick/$ACTIVE_PACK" ]]; then
+    readonly CONFIG_DIR="$HOME/.cache/wayclick/$ACTIVE_PACK"
+else
+    readonly CONFIG_DIR="$HOME/.config/wayclick/$ACTIVE_PACK"
+fi
+
+
 
 # --- ANSI COLORS ---
 readonly C_RED=$'\033[1;31m'
@@ -38,6 +48,8 @@ fn_toggle_notify() {
     # Send notification if command exists
     if command -v notify-send &>/dev/null; then
         notify-send --app-name="WayClick" --icon="$icon" "WayClick Elite" "$body"
+        # Tiny sleep to ensure DBus message is dispatched
+        sleep 0.1
     fi
 
     # Play sound if command and file exist
@@ -163,7 +175,7 @@ if ! check_sounds; then
         done
         printf "%b[CHECK]%b Configuration found.\n" "${C_GREEN}" "${C_RESET}"
     else
-        notify_user "Missing config.json in ~/.config/wayclick. Run in terminal."
+        notify_user "Missing config.json in ~/.config/wayclick/$ACTIVE_PACK. Run in terminal."
         exit 1
     fi
 fi
@@ -231,6 +243,7 @@ import json
 # === PERFORMANCE FLAGS ===
 # Clean startup
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
+
 # Low latency audio drivers
 os.environ['SDL_BUFFER_CHUNK_SIZE'] = '256' 
 
@@ -246,12 +259,13 @@ C_RED = "\033[1;31m"
 C_RESET = "\033[0m"
 
 ASSET_DIR = sys.argv[1]
+VOLUME = float(os.environ.get('VOLUME', '0.8'))
 ENABLE_TRACKPADS = os.environ.get('ENABLE_TRACKPADS', 'false').lower() == 'true'
 
 # === AUDIO INIT ===
 # 44100Hz, 16-bit, 2 channels, 256 sample buffer
 try:
-    pygame.mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=256)
+    pygame.mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=256, devicename="Ryzen HD Audio Controller Analog Stereo")
     pygame.mixer.init()
     pygame.mixer.set_num_channels(32)
 except pygame.error as e:
@@ -266,18 +280,41 @@ try:
     with open(CONFIG_FILE, 'r') as f:
         config_data = json.load(f)
         
+        # Support both 'mappings' (WayClick Elite) and 'defines' (other formats)
+        raw_map_data = config_data.get("mappings") or config_data.get("defines") or {}
+        
+        # Support 'single' vs 'multi' (MechVibes)
+        is_single = config_data.get("key_define_type") == "single"
+        main_sound_file = config_data.get("sound")
+        
         # JSON keys are strings, but evdev expects integers.
-        # We assume the config file uses string representation of integers (e.g. "1": "file.wav")
-        RAW_KEY_MAP = {int(k): v for k, v in config_data.get("mappings", {}).items()}
+        # Filter out None values which cause crashes in path join
+        RAW_KEY_MAP = {int(k): v for k, v in raw_map_data.items() if v is not None}
+        
+        # Support 'defaults' (list) or 'sound' (single) fallback
         DEFAULTS = config_data.get("defaults", [])
+        if not DEFAULTS and main_sound_file:
+            DEFAULTS = [main_sound_file]
+            
+        # Ensure DEFAULTS is a list and filter out None
+        if not isinstance(DEFAULTS, list):
+            DEFAULTS = [DEFAULTS]
+        DEFAULTS = [d for d in DEFAULTS if d is not None]
         
 except Exception as e:
     print(f"{C_RED}[CONFIG ERROR]{C_RESET} Failed to load {CONFIG_FILE}: {e}")
     sys.exit(1)
 
 # Dynamically determine which files to load based on the config
-# This allows the user to add new wav files to config.json without editing script
-SOUND_FILES = list(set(list(RAW_KEY_MAP.values()) + DEFAULTS))
+SOUND_FILES = []
+if is_single and main_sound_file:
+    SOUND_FILES = [main_sound_file]
+else:
+    # Only collect filenames from RAW_KEY_MAP if it's 'multi'
+    # In 'single', values are offsets [start, end] which are not filenames
+    filenames = [v for v in RAW_KEY_MAP.values() if isinstance(v, str)]
+    SOUND_FILES = list(set(filenames + DEFAULTS))
+
 SOUNDS = {}
 
 # Load Sounds
@@ -285,7 +322,9 @@ for filename in SOUND_FILES:
     path = os.path.join(ASSET_DIR, filename)
     if os.path.exists(path):
         try:
-            SOUNDS[filename] = pygame.mixer.Sound(path)
+            s = pygame.mixer.Sound(path)
+            s.set_volume(VOLUME)
+            SOUNDS[filename] = s
         except pygame.error:
             # File exists but is corrupt or invalid
             print(f"{C_YELLOW}[WARN]{C_RESET} Failed to load wav: {filename}")
@@ -298,16 +337,29 @@ if not SOUNDS:
 
 # === OPTIMIZATION: CACHED LIST LOOKUP ===
 # Convert Dictionary Map -> Array Index for O(1) access
-# Standard evdev keycodes are usually small, but user configs may use higher scan codes.
-# We allocate 64k to cover virtually all possibilities (consumes ~0.5MB RAM).
 MAX_KEYCODE = 65536
 SOUND_CACHE = [None] * MAX_KEYCODE
-DEFAULT_SOUND_OBJS = [SOUNDS[f] for f in DEFAULTS if f in SOUNDS]
+
+# Pre-bind default sounds
+if is_single and main_sound_file in SOUNDS:
+    DEFAULT_SOUND_OBJS = [SOUNDS[main_sound_file]]
+else:
+    DEFAULT_SOUND_OBJS = [SOUNDS[f] for f in DEFAULTS if f in SOUNDS]
 
 # Pre-fill the cache
-for code, filename in RAW_KEY_MAP.items():
-    if code < MAX_KEYCODE and filename in SOUNDS:
-        SOUND_CACHE[code] = SOUNDS[filename]
+if is_single:
+    # In 'single' mode, we use the main sound file for all mapped keys
+    # Offset slicing is not supported without numpy, so we play the whole sound (usually a single click anyway)
+    main_snd = SOUNDS.get(main_sound_file)
+    if main_snd:
+        for code in RAW_KEY_MAP:
+            if code < MAX_KEYCODE:
+                SOUND_CACHE[code] = main_snd
+else:
+    # In 'multi' mode, we use the unique files
+    for code, filename in RAW_KEY_MAP.items():
+        if code < MAX_KEYCODE and filename in SOUNDS:
+            SOUND_CACHE[code] = SOUNDS[filename]
 
 # Pre-bind random choice to avoid module lookup in hot path
 _random_choice = random.choice
@@ -419,13 +471,11 @@ EOF
 printf "%b[RUN]%b Starting engine...\n" "${C_BLUE}" "${C_RESET}"
 
 # Keybind Notification: Enabled
-# We only send this if we are NOT in a terminal (keybind mode)
-if ! $INTERACTIVE; then
-    fn_toggle_notify "Enabled" "input-mouse-symbolic"
-fi
+# We always notify so the user knows the engine is hot.
+fn_toggle_notify "Enabled" "input-mouse-symbolic"
 
 # Execute using the VENV python directly, with -O to remove assertions
-# We pass the trackpad toggle as an environment variable
-ENABLE_TRACKPADS="$CONFIG_ENABLE_TRACKPADS" "$VENV_DIR/bin/python" -O "$RUNNER_SCRIPT" "$CONFIG_DIR"
+# We pass the trackpad toggle and volume as environment variables
+VOLUME="$CONFIG_VOLUME" ENABLE_TRACKPADS="$CONFIG_ENABLE_TRACKPADS" "$VENV_DIR/bin/python" -O "$RUNNER_SCRIPT" "$CONFIG_DIR"
 
 printf "\n%b[INFO]%b WayClick stopped.\n" "${C_BLUE}" "${C_RESET}"

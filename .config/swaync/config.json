@@ -25,7 +25,6 @@
     "widgets": [
         "title",
         "dnd",
-        "buttons-grid",
         "volume",
         "backlight",
         "notifications"
@@ -43,38 +42,6 @@
         },
         "backlight": {
             "label": ""
-        },
-        "buttons-grid": {
-            "actions": [
-                {
-                    "label": "󰡬",
-                    "command": "uwsm-app -- $HOME/user_scripts/sliders/hyprsunset_slider.sh"
-                },
-                {
-                    "label": "",
-                    "command": "uwsm-app -- kitty --class nmcli_wifi.sh -e $HOME/user_scripts/network_manager/nmcli_wifi.sh"
-                },
-                {
-                    "label": "󰂯",
-                    "command": "uwsm-app -- blueman-manager"
-                },
-                {
-                    "label": "󰕾",
-                    "command": "uwsm-app -- pavucontrol"
-                },
-                {
-                    "label": "",
-                    "command": "uwsm-app -- $HOME/user_scripts/theme_matugen/random_theme.sh"
-                },
-                {
-                    "label": "󰓅",
-                    "command": "uwsm-app -- kitty -e --class performance.sh $HOME/user_scripts/performance/services_and_process_terminator.sh"
-                },
-                {
-                    "label": "󱫓",
-                    "command": "uwsm-app -- kitty -e --class timeout.sh $HOME/user_scripts/hypridle/timeout.sh"
-                }
-            ]
         }
     }
 }

@@ -17,9 +17,11 @@ else
 fi
 # Always restart hyprpaper to set the new wallpaper
 echo "Setting new wallpaper..."
+pywalfox update
 killall eww
 eww open-many bar
 swaync-client -rs
+killall swayosd-server && swayosd-server &
 killall hyprpaper
 hyprpaper &
 echo "Done."

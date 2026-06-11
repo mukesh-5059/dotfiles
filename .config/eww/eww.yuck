@@ -7,6 +7,8 @@
 (defvar brightness false)
 (defvar battery false)
 (defvar memory false)
+(defvar cpu false)
+(defvar gpu false)
 (defvar launcher false)
 (defvar wifi false)
 (defvar bluetooth false)
@@ -18,6 +20,7 @@
 ;;;;; Deflistens ;;;;;
 (deflisten music :initial "" "playerctl --follow metadata --format '{{ title }}' || true")
 (deflisten artist :initial "" "playerctl --follow metadata --format '{{ artist }}' || true")
+(deflisten tasks :initial "[]" "bash ~/.config/eww/scripts/get_tasks.sh")
 (deflisten current-music-cover :initial "" "playerctl --follow metadata --format {{mpris:artUrl}}")
 ;;;;;;;;;;;;;;;;;;;;;;
 
@@ -36,6 +39,9 @@
 (defpoll current-memory :interval "10s" :initial "0" "~/.config/eww/scripts/get-memory.sh")
 (defpoll current-temperature :interval "10s" :initial "0" "~/.config/eww/scripts/get-temperature.sh")
 (defpoll current-cpu :interval "10s" :initial "0" "~/.config/eww/scripts/get-cpu.sh")
+(defpoll current-gpu :interval "10s" :initial "0" "~/.config/eww/scripts/get-gpu.sh")
+(defpoll current-vram :interval "10s" :initial "0" "~/.config/eww/scripts/get-vram.sh")
+(defpoll current-vram-detail :interval "10s" :initial "0" "~/.config/eww/scripts/get-vram-detail.sh")
 (defpoll current-disk :interval "1m" :initial "0" "~/.config/eww/scripts/get-disk.sh")
 (defpoll current-disk-detail :interval "1m" :initial "0" "~/.config/eww/scripts/get-disk-detail.sh")
 (defpoll current-memory-detail :interval "10s" :initial "0" "~/.config/eww/scripts/get-memory-detail.sh")

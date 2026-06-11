@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Get the free memory value from the 'free' command, in human-readable format (MB or GB)
-free_memory=$(free -h | awk '/Mem:/ {print $7}')
+# Get the used memory value from the 'free' command, in human-readable format
+used_memory=$(free -h | awk '/Mem:/ {print $3}')
 
-# Print the free memory
-echo "$free_memory"
+# Print the used memory
+echo "$used_memory"
 

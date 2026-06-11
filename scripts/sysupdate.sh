@@ -45,11 +45,15 @@ announce() { printf "\n\e[1;34m==> %s\e[0m\n" "$1"; }
 
 # ---------- CLI Switches ---------------------------------------------------
 DO_UPGRADE=false
+DO_MIRRORS=false
+SKIP_SNAPSHOT=false
 while [[ $# -gt 0 ]]; do
   case $1 in
     -u|--upgrade) DO_UPGRADE=true ; shift ;;
+    -m|--mirrors) DO_MIRRORS=true ; shift ;;
+    -n|--no-snapshot) SKIP_SNAPSHOT=true ; shift ;;
     -h|--help)
-      echo "Usage: $0 [--upgrade]"
+      echo "Usage: $0 [--upgrade] [--mirrors] [--no-snapshot]"
       exit 0 ;;
     *) echo "Unknown option: $1" ; exit 2 ;;
   esac
@@ -57,22 +61,61 @@ done
 
 announce "Arch Spring‑Clean starting $(date)  —  using $AUR"
 
-# ---------- 1. Optional system upgrade ------------------------------------
+# ---------- 0. Timeshift Snapshot -----------------------------------------
+if ! $SKIP_SNAPSHOT; then
+  announce "Creating Timeshift snapshot"
+  sudo timeshift --create --comments "Spring-Clean Snapshot ($(date +'%F %T'))" --tags D
+else
+  announce "Skipping Timeshift snapshot"
+fi
+
+# ---------- 1. Optional Mirror Refresh -------------------------------------
+if $DO_MIRRORS; then
+  announce "Refreshing mirrorlist (reflector) - Optimized for India"
+  if command -v reflector &>/dev/null; then
+    # Increase timeouts to 15s to handle slower network conditions
+    REFLECTOR_OPTS="--country India --latest 10 --protocol https --connection-timeout 15 --download-timeout 15"
+    
+    echo "Attempting to sort by rate (speed)..."
+    if ! sudo reflector $REFLECTOR_OPTS --sort rate --save /etc/pacman.d/mirrorlist; then
+      echo "Rate sorting failed. Falling back to sorting by age (recent sync)..."
+      sudo reflector $REFLECTOR_OPTS --sort age --save /etc/pacman.d/mirrorlist
+    fi
+  else
+    echo "Error: reflector not found. Skipping mirror refresh."
+  fi
+fi
+
+# ---------- 2. Optional system upgrade ------------------------------------
 if $DO_UPGRADE; then
   announce "System upgrade ($AUR)"
   $AUR -Syu --ask 4   # interactive for .pacnew merges
   echo "Run 'sudo pacdiff' after the script to merge new config files."
+
+  if command -v flatpak &>/dev/null; then
+    announce "Flatpak updates"
+    flatpak update
+  fi
+
+  if command -v fwupdmgr &>/dev/null; then
+    announce "Firmware updates (BIOS)"
+    sudo fwupdmgr refresh --force
+    fwupdmgr get-updates
+    if confirm "Apply firmware updates now? (May require reboot) [y/N]"; then
+      sudo fwupdmgr update
+    fi
+  fi
 fi
 
 # ---------- 2. Pacman cache trim ------------------------------------------
 announce "Pacman cache trim (keeping latest $PACCACHE_RETAIN)"
-current_cache=$(du -sh /var/cache/pacman/pkg | cut -f1)
+current_cache=$(sudo du -sh /var/cache/pacman/pkg | cut -f1)
 echo "Current cache: $current_cache"
 if confirm "Clean pacman cache now? [y/N]"; then
   sudo paccache -vrk$PACCACHE_RETAIN
   sudo paccache -ruk0
 fi
-new_cache=$(du -sh /var/cache/pacman/pkg | cut -f1)
+new_cache=$(sudo du -sh /var/cache/pacman/pkg | cut -f1)
 echo "Cache after trim: $new_cache"
 
 # ---------- 3. Orphaned packages ------------------------------------------
@@ -110,7 +153,7 @@ echo "Journald: $journal_before  ->  $journal_after"
 
 # ---------- 6. Failed systemd units --------------------------------------
 announce "Scanning for failed systemd services"
-if systemctl --failed --quiet; then
+if ! systemctl --failed --quiet; then
   echo "No failed units detected."
 else
   systemctl --failed --no-pager --plain

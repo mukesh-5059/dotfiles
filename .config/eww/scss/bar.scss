@@ -7,7 +7,7 @@
 .launcher {
   font-size: 1.2rem;
   color: $foreground;
-  padding: 0 12px 0 8px;
+  padding: 0 8px 0 8px;
   border-radius: 8px;
   transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
 }
@@ -150,6 +150,18 @@
   background-color: mix($background, $foreground, 80%)
 }
 
+.cpubar{
+  margin: 0 0 0 12px;
+  color: mix($color3, $foreground, 90%);
+  background-color: mix($background, $foreground, 80%)
+}
+
+.gpubar{
+  margin: 0 0 0 12px;
+  color: mix($color3, $foreground, 90%);
+  background-color: mix($background, $foreground, 80%)
+}
+
 .musicbar{
   min-width: 150px;
 }
@@ -162,6 +174,16 @@
   font-size: .7rem;
 }
 .memory-icon{
+  padding: 2px;
+  color: transparent;
+}
+
+.cpu-icon{
+  padding: 2px;
+  color: transparent;
+}
+
+.gpu-icon{
   padding: 2px;
   color: transparent;
 }
@@ -213,6 +235,21 @@ tooltip.background{
 }
 
 .memory-label{
+  color: mix($color3, $foreground, 90%);
+  margin: 0 4px 0 4px;
+}
+
+.cpu-label{
+  color: mix($color3, $foreground, 90%);
+  margin: 0 4px 0 4px;
+}
+
+.gpu-label{
+  color: mix($color3, $foreground, 90%);
+  margin: 0 4px 0 4px;
+}
+
+.vram-label{
   color: mix($color3, $foreground, 90%);
   margin: 0 4px 0 4px;
 }

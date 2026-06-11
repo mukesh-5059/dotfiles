@@ -1,0 +1,73 @@
+/* SwayOSD Wallust Template */
+* {
+  font-family: "Iosevka Nerd Font";
+}
+
+@define-color theme_bg_color #1B1918;
+@define-color theme_fg_color #E9E3CC;
+
+/* Colors */
+@define-color color0 #464442;
+@define-color color1 #66584B;
+@define-color color2 #776E57;
+@define-color color3 #877F67;
+@define-color color4 #83857C;
+@define-color color5 #888469;
+@define-color color6 #908452;
+@define-color color7 #D7CFAE;
+@define-color color8 #979179;
+@define-color color9 #746251;
+@define-color color10 #8B7F60;
+@define-color color11 #92845F;
+@define-color color12 #84887A;
+@define-color color13 #9B946A;
+@define-color color14 #C0B06D;
+@define-color color15 #D7CFAE;
+
+window#osd {
+  border-radius: 24px;
+  border: none;
+  background: @theme_bg_color;
+  /* CRITICAL CHANGES START */
+  /* The shadow definition: x-offset y-offset blur spread color */
+  box-shadow: 0px 4px 12px 2px rgba(0, 0, 0, 0.6);
+  /* You MUST add margin. Without this, the shadow is clipped 
+     by the window boundary and becomes invisible. */
+  margin: 16px;
+  /* CRITICAL CHANGES END */
+}
+
+window#osd #container {
+  margin: 16px;
+}
+
+window#osd image,
+window#osd label {
+  color: @color5;
+}
+
+window#osd progressbar:disabled,
+window#osd image:disabled {
+  opacity: 0.5;
+}
+
+window#osd progressbar {
+  min-height: 6px;
+  border-radius: 12px;
+  background: transparent;
+  border: none;
+}
+
+window#osd trough {
+  min-height: inherit;
+  border-radius: inherit;
+  border: none;
+  background: alpha(@theme_fg_color, 0.5);
+}
+
+window#osd progress {
+  min-height: inherit;
+  border-radius: inherit;
+  border: none;
+  background: @theme_fg_color;
+}
