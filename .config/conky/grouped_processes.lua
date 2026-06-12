@@ -4,7 +4,7 @@
 require 'cairo'
 require 'cairo_xlib'
 
-local wallpaper_bg = "#000200"
+local wallpaper_bg = "#030000"
 
 local function hex_to_rgb(hex)
     hex = hex:gsub("#", "")
@@ -61,18 +61,29 @@ local system_processes = {
     ["zsh"] = true,
 }
 
--- CPU Core Count and Sampling Cache
+-- CPU/GPU Sampling Cache
 local num_cores = 1
 local cached_processes = nil
 local cached_pids = nil
 local last_ps_time = 0
-local PS_CACHE_DURATION = 1.9 -- Update interval is 2.0s, cache slightly under to match update tick
+local PS_CACHE_DURATION = 1.9 -- Update interval is 2.0s
 
--- Store previous ticks for instantaneous CPU calculation
+-- Store previous ticks for instantaneous calculation
 local prev_system_total = nil
 local prev_proc_ticks = {}
+local prev_gpu_ticks = {}
+local last_sample_uptime = nil
 
--- 1. Read number of CPU cores once on load
+-- 1. Get high-precision uptime for sample duration
+local function get_uptime()
+    local f = io.open("/proc/uptime", "r")
+    if not f then return os.clock() end
+    local line = f:read("*l")
+    f:close()
+    return tonumber(line:match("^(%d+%.%d+)"))
+end
+
+-- 2. Read number of CPU cores once on load
 local function detect_cores()
     local f = io.open("/proc/cpuinfo", "r")
     if f then
@@ -86,7 +97,7 @@ local function detect_cores()
 end
 detect_cores()
 
--- 2. Reads total system CPU ticks from /proc/stat
+-- 3. Reads total system CPU ticks from /proc/stat
 local function get_system_ticks()
     local f = io.open("/proc/stat", "r")
     if not f then return nil end
@@ -101,7 +112,7 @@ local function get_system_ticks()
     return nil
 end
 
--- 3. Reads process ticks (utime + stime) from /proc/[pid]/stat
+-- 4. Reads process ticks (utime + stime) from /proc/[pid]/stat
 local function get_process_ticks(pid)
     local f = io.open("/proc/" .. pid .. "/stat", "r")
     if not f then return nil end
@@ -117,24 +128,74 @@ local function get_process_ticks(pid)
         table.insert(fields, field)
     end
     
-    -- field 12 is utime, field 13 is stime (relative to the end of process name parenthesis)
     local utime = tonumber(fields[12]) or 0
     local stime = tonumber(fields[13]) or 0
     return utime + stime
 end
 
--- 4. Draws a rounded background card matching the Eww widgets
+-- 5. Reads all unique GPU ticks and VRAM from /proc/*/fdinfo/*
+local function get_gpu_stats()
+    local gpu_map = {}
+    local vram_map = {}
+    local clients_seen = {}
+    
+    local handle = io.popen("grep -sH 'drm-engine-\\|drm-client-id\\|drm-memory-vram' /proc/*/fdinfo/* 2>/dev/null")
+    if not handle then return gpu_map, vram_map end
+
+    local temp_fd_data = {}
+
+    for line in handle:lines() do
+        -- Line format: /proc/PID/fdinfo/FD:KEY: VAL [ns|KiB]
+        local pid_str, fd_str, key, val_str = line:match("/proc/(%d+)/fdinfo/(%d+):([%w%-]+):%s+(%d+)")
+        if pid_str then
+            local pid = tonumber(pid_str)
+            local fd = tonumber(fd_str)
+            local val = tonumber(val_str)
+            
+            local fd_key = pid .. ":" .. fd
+            if not temp_fd_data[fd_key] then
+                temp_fd_data[fd_key] = { pid = pid, engines = {}, client_id = nil, vram = 0 }
+            end
+            
+            if key == "drm-client-id" then
+                temp_fd_data[fd_key].client_id = val
+            elseif key == "drm-memory-vram" then
+                temp_fd_data[fd_key].vram = val
+            elseif key:match("^drm%-engine%-") then
+                temp_fd_data[fd_key].engines[key] = val
+            end
+        end
+    end
+    handle:close()
+
+    for _, data in pairs(temp_fd_data) do
+        local client_key = data.pid .. ":" .. (data.client_id or "no-id")
+        if not clients_seen[client_key] then
+            clients_seen[client_key] = true
+            
+            -- Aggregate Ticks
+            local pid_ticks = 0
+            for _, engine_val in pairs(data.engines) do
+                pid_ticks = pid_ticks + engine_val
+            end
+            gpu_map[data.pid] = (gpu_map[data.pid] or 0) + pid_ticks
+            
+            -- Aggregate VRAM
+            vram_map[data.pid] = (vram_map[data.pid] or 0) + data.vram
+        end
+    end
+
+    return gpu_map, vram_map
+end
+
+-- 6. Draws a rounded background card
 function conky_draw_sidebar_background()
     if conky_window == nil then return end
-    
     local cs = cairo_xlib_surface_create(conky_window.display, conky_window.drawable,
                                          conky_window.visual, conky_window.width,
                                          conky_window.height)
     local cr = cairo_create(cs)
-    
-    local w = conky_window.width
-    local h = conky_window.height
-    local r = 12
+    local w, h, r = conky_window.width, conky_window.height, 12
     
     cairo_move_to(cr, r, 0)
     cairo_line_to(cr, w - r, 0)
@@ -147,42 +208,43 @@ function conky_draw_sidebar_background()
     cairo_curve_to(cr, 0, 0, 0, 0, r, 0)
     cairo_close_path(cr)
     
-    -- Color: mixed background matching Eww
     cairo_set_source_rgba(cr, bg_r, bg_g, bg_b, 1.0)
     cairo_fill(cr)
-    
     cairo_destroy(cr)
     cairo_surface_destroy(cs)
 end
 
--- 5. Fetches processes and calculates instantaneous CPU using /proc sampling
+-- 7. Fetches processes and calculates CPU/GPU usage
 local function fetch_processes()
     local now = os.time()
+    local current_uptime = get_uptime()
+    
     if cached_processes and (now - last_ps_time < PS_CACHE_DURATION) then
         return cached_processes, cached_pids
     end
 
-    -- Run ps to get active process structure (much faster without pcpu avg calculation)
     local handle = io.popen("ps -eo pid,ppid,rss,comm --no-headers")
     if not handle then return nil, nil end
 
     local current_system_total = get_system_ticks()
+    local current_gpu_ticks, current_vram_usage = get_gpu_stats()
+    
     local processes = {}
     local pids = {}
     local next_proc_ticks = {}
+    
+    local duration_sec = 0
+    if last_sample_uptime then
+        duration_sec = current_uptime - last_sample_uptime
+    end
 
     for line in handle:lines() do
         local pid_str, ppid_str, rss_str, name = line:match("^%s*(%d+)%s+(%d+)%s+(%d+)%s+(.+)$")
         if pid_str then
             local pid = tonumber(pid_str)
-            local ppid = tonumber(ppid_str)
-            local rss = tonumber(rss_str) or 0
-            
-            -- Read current CPU ticks for this PID
             local ticks = get_process_ticks(pid) or 0
             next_proc_ticks[pid] = ticks
             
-            -- Calculate instantaneous CPU usage percentage
             local cpu = 0.0
             if prev_system_total and current_system_total and current_system_total > prev_system_total then
                 local prev_ticks = prev_proc_ticks[pid] or 0
@@ -193,21 +255,30 @@ local function fetch_processes()
                 end
             end
 
+            local gpu = 0.0
+            if duration_sec > 0.05 then
+                local current_gpu = current_gpu_ticks[pid] or 0
+                local previous_gpu = prev_gpu_ticks[pid] or 0
+                local gpu_diff_ns = current_gpu - previous_gpu
+                if gpu_diff_ns > 0 then
+                    gpu = (gpu_diff_ns / (duration_sec * 1000000000)) * 100.0
+                end
+                if gpu > 100 then gpu = 100 end
+            end
+
             processes[pid] = {
-                pid = pid,
-                ppid = ppid,
-                name = name,
-                cpu = cpu,
-                rss = rss
+                pid = pid, ppid = tonumber(ppid_str), name = name,
+                cpu = cpu, gpu = gpu, vram = current_vram_usage[pid] or 0, rss = tonumber(rss_str) or 0
             }
             table.insert(pids, pid)
         end
     end
     handle:close()
 
-    -- Save ticks for the next sample
     prev_system_total = current_system_total
     prev_proc_ticks = next_proc_ticks
+    prev_gpu_ticks = current_gpu_ticks
+    last_sample_uptime = current_uptime
 
     cached_processes = processes
     cached_pids = pids
@@ -215,39 +286,23 @@ local function fetch_processes()
     return processes, pids
 end
 
--- 6. Groups processes by lineage and formats their CPU/memory output
+-- 8. Groups processes and formats output
 function conky_get_grouped_processes(sort_by, limit)
     sort_by = sort_by or "cpu"
     limit = tonumber(limit) or 4
 
     local processes, pids = fetch_processes()
-    if not processes then return "Error reading processes" end
+    if not processes then return "Error" end
 
     local groups = {}
-
     local function get_group_name(pid)
-        local visited = {}
-        local current = processes[pid]
-        
+        local visited, current = {}, processes[pid]
         while current do
-            if visited[current.pid] then
-                return current.name
-            end
+            if visited[current.pid] then return current.name end
             visited[current.pid] = true
-
-            if system_processes[current.name] or current.ppid <= 1 then
-                return current.name
-            end
-
+            if system_processes[current.name] or current.ppid <= 1 then return current.name end
             local parent = processes[current.ppid]
-            if not parent then
-                return current.name
-            end
-
-            if system_processes[parent.name] then
-                return current.name
-            end
-
+            if not parent or system_processes[parent.name] then return current.name end
             current = parent
         end
         return "unknown"
@@ -255,58 +310,31 @@ function conky_get_grouped_processes(sort_by, limit)
 
     for _, pid in ipairs(pids) do
         local proc = processes[pid]
-        local group_name = get_group_name(pid)
-        group_name = group_name:match("([^/]+)$") or group_name
-
-        if not groups[group_name] then
-            groups[group_name] = {
-                name = group_name,
-                cpu = 0.0,
-                rss = 0
-            }
-        end
-        groups[group_name].cpu = groups[group_name].cpu + proc.cpu
-        groups[group_name].rss = groups[group_name].rss + proc.rss
+        local gname = get_group_name(pid):match("([^/]+)$") or "unknown"
+        if not groups[gname] then groups[gname] = { name = gname, cpu = 0, gpu = 0, vram = 0, rss = 0 } end
+        groups[gname].cpu = groups[gname].cpu + proc.cpu
+        groups[gname].gpu = groups[gname].gpu + proc.gpu
+        groups[gname].vram = groups[gname].vram + proc.vram
+        groups[gname].rss = groups[gname].rss + proc.rss
     end
 
-    local group_list = {}
-    for _, group in pairs(groups) do
-        table.insert(group_list, group)
-    end
+    local list = {}
+    for _, g in pairs(groups) do table.insert(list, g) end
+    table.sort(list, function(a, b) return (a[sort_by] or 0) > (b[sort_by] or 0) end)
 
-    if sort_by == "cpu" then
-        table.sort(group_list, function(a, b) return a.cpu > b.cpu end)
-    else
-        table.sort(group_list, function(a, b) return a.rss > b.rss end)
-    end
-
-    local function format_mem(kib)
-        if kib >= 1024 * 1024 then
-            return string.format("%.2f GiB", kib / (1024 * 1024))
-        elseif kib >= 1024 then
-            return string.format("%.1f MiB", kib / 1024)
-        else
-            return string.format("%d KiB", kib)
-        end
+    local function fmem(k)
+        if k >= 1048576 then return string.format("%.1fG", k/1048576)
+        elseif k >= 1024 then return string.format("%.0fM", k/1024)
+        else return k.."K" end
     end
 
     local lines = {}
-    for i = 1, math.min(#group_list, limit) do
-        local g = group_list[i]
-        local name = g.name
-        if #name > 12 then
-            name = string.sub(name, 1, 11) .. "…"
-        end
-        local cpu_str = string.format("%5.1f%%", g.cpu)
-        local mem_str = format_mem(g.rss)
-        local line_str = string.format("${goto 16}%s${goto 112}%s${alignr}%s  ", name, cpu_str, mem_str)
-        table.insert(lines, line_str)
+    for i = 1, math.min(#list, limit) do
+        local g = list[i]
+        local name = #g.name > 12 and g.name:sub(1,11).."…" or g.name
+        local val = (sort_by == "rss") and fmem(g.rss) or string.format("%.1f%%", g[sort_by])
+        local extra = (sort_by == "gpu") and fmem(g.vram) or fmem(g.rss)
+        table.insert(lines, string.format("${goto 16}%-12s${goto 112}%7s${alignr}%5s  ", name, val, extra))
     end
-
-    local result = table.concat(lines, "\n")
-    if conky_parse then
-        return conky_parse(result)
-    else
-        return result
-    end
+    return conky_parse and conky_parse(table.concat(lines, "\n")) or table.concat(lines, "\n")
 end
