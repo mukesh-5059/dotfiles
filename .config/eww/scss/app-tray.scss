@@ -3,12 +3,13 @@
 }
 
 .app-icon {
-  font-size: 14px;
-  padding: 0 5px;
-  background-color: mix($background, $color1, 90%);
-  border-radius: 5px;
+  font-size: 0.9rem;
+  color: $foreground;
+  padding: 0 8px 0 4px;
+  border-radius: 8px;
+  transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
 }
 
 .app-icon:hover {
-  background-color: mix($background, $color1, 80%);
+  background-color: mix($background, $foreground, 95%);
 }

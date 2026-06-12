@@ -1,13 +1,17 @@
 .resources {
   background-color: $background;
-  padding: 8px;
+  padding: 12px;
   border-radius: 12px;
+  min-width: 210px;
 }
 
 .memory-bar trough, 
 .temperature-bar trough, 
 .storage-bar trough, 
 .battery-bar trough, 
+.gpu-bar trough,
+.vram-bar trough,
+.power-bar trough,
 .cpu-bar trough {
   background-color: mix($background, $foreground, 70%);
   border-radius: 8px;
@@ -31,18 +35,46 @@
   background-color: mix($color4, $foreground, 100%);
 }
 
+.gpu-bar trough progress {
+  background-color: mix($color2, $foreground, 100%);
+}
+
+.vram-bar trough progress {
+  background-color: mix($color6, $foreground, 100%);
+}
+
+.power-bar trough progress {
+  background-color: mix($color5, $foreground, 100%);
+}
+
 .temperature-bar trough progress {
   background-color: mix($color7, $foreground, 100%);
 }
 
-/* Slightly rounded bars */
+/* Slightly rounded progress bars */
 .memory-bar trough progress, 
 .temperature-bar trough progress, 
 .storage-bar trough progress, 
 .battery-bar trough progress, 
+.gpu-bar trough progress,
+.vram-bar trough progress,
+.power-bar trough progress,
 .cpu-bar trough progress {
   min-width: 32px;
   min-height: 6px;
   border-radius: 6px;
 }
 
+.resource-label {
+  font-size: 13px;
+  font-weight: bold;
+  color: $foreground;
+  margin-bottom: 2px;
+}
+
+.resource-percentage {
+  font-size: 13px;
+  font-weight: bold;
+  color: $foreground;
+  margin-bottom: 4px;
+}

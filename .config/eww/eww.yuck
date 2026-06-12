@@ -22,6 +22,7 @@
 (deflisten artist :initial "" "playerctl --follow metadata --format '{{ artist }}' || true")
 (deflisten tasks :initial "[]" "bash ~/.config/eww/scripts/get_tasks.sh")
 (deflisten current-music-cover :initial "" "playerctl --follow metadata --format {{mpris:artUrl}}")
+(deflisten active-apps :initial "[]" "sh ~/.config/eww/scripts/get-workspace-apps.sh")
 ;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;; Defpolls ;;;;;
@@ -42,6 +43,8 @@
 (defpoll current-gpu :interval "10s" :initial "0" "~/.config/eww/scripts/get-gpu.sh")
 (defpoll current-vram :interval "10s" :initial "0" "~/.config/eww/scripts/get-vram.sh")
 (defpoll current-vram-detail :interval "10s" :initial "0" "~/.config/eww/scripts/get-vram-detail.sh")
+(defpoll current-power-draw :interval "5s" :initial "0 W" "~/.config/eww/scripts/get-power-draw.sh")
+(defpoll current-power-percent :interval "5s" :initial "0" "~/.config/eww/scripts/get-power-percent.sh")
 (defpoll current-disk :interval "1m" :initial "0" "~/.config/eww/scripts/get-disk.sh")
 (defpoll current-disk-detail :interval "1m" :initial "0" "~/.config/eww/scripts/get-disk-detail.sh")
 (defpoll current-memory-detail :interval "10s" :initial "0" "~/.config/eww/scripts/get-memory-detail.sh")

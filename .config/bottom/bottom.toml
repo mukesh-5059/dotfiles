@@ -62,7 +62,7 @@ process_memory_as_value = true
 # Show tree mode by default in the processes widget.
 #tree = false
 # Shows an indicator in table widgets tracking where in the list you are.
-#show_table_scroll_position = false
+show_table_scroll_position = true
 # Show processes as their commands by default in the process widget.
 #process_command = false
 # Displays the network widget with binary prefixes.
@@ -76,14 +76,14 @@ process_memory_as_value = true
 # Shows GPU(s) memory
 enable_gpu_memory = true
 # Shows cache and buffer memory
-#enable_cache_memory = false
+enable_cache_memory = true
 # How much data is stored at once in terms of time.
 #retention = "10m"
 
 # These are flags around the process widget.
 
 #[processes]
-columns = ["PID", "Name", "CPU%", "Mem%", "R/s", "W/s", "T.Read", "T.Write", "User", "State"]
+columns = ["PID", "Name", "CPU%", "Mem%", "GMem%", "GPU%", "R/s", "W/s"]
 
 # These are all the components that support custom theming.  Note that colour support
 # will depend on terminal support.

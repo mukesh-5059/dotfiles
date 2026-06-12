@@ -19,5 +19,11 @@ swaync.target = '~/.config/swaync/style.css'
 swayosd.template = 'swayosd.css'
 swayosd.target = '~/.config/swayosd/style.css'
 
+conky.template = 'conky_sidebar.conf'
+conky.target = '~/modified-zenities/.config/conky/conky_sidebar.conf'
+
+conky_lua.template = 'grouped_processes.lua'
+conky_lua.target = '~/modified-zenities/.config/conky/grouped_processes.lua'
+
 vscode = { src = 'vscode.json', dst = '~/.cache/wallust/colors.json' }
 vscode2 = { src = 'vscode', dst = '~/.cache/wallust/colors' }

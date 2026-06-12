@@ -133,6 +133,16 @@
   padding: 0 10px 0 4px;
 }
 
+.tray-button {
+  color: mix($color1, $foreground, 65%);
+  font-size: 0.95rem;
+  padding: 0 6px 0 6px;
+}
+
+.tray {
+  padding: 0 4px 0 4px;
+}
+
 .batterybar{
   margin: 0 0 0 12px;
   color: mix($color3, $foreground, 90%);

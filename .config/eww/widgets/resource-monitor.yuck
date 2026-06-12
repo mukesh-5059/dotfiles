@@ -5,8 +5,8 @@
           :orientation "vertical"
           :space-evenly "false"
           :spacing "2"
-        (button :class "temperature-bar-icon" "TMP")
-        (button :class "temperature-bar-percentage" "${current-temperature}°")
+        (label :class "resource-label" :text "TMP")
+        (label :class "resource-percentage" :text "${current-temperature}°")
         (progress :class "temperature-bar"
                :flipped true
                :value current-temperature
@@ -20,8 +20,8 @@
           :orientation "vertical"
           :space-evenly "false"
           :spacing "2"
-        (button :class "storage-bar-icon" "DSK")
-        (button :class "storage-bar-percentage" "${current-disk}%")
+        (label :class "resource-label" :text "DSK")
+        (label :class "resource-percentage" :text "${current-disk}%")
         (progress :class "storage-bar"
                :flipped true
                :value current-disk
@@ -35,11 +35,39 @@
           :orientation "vertical"
           :space-evenly "false"
           :spacing "2"
-        (button :class "cpu-bar-icon" "CPU")
-        (button :class "cpu-bar-percentage" "${current-cpu}%")
+        (label :class "resource-label" :text "CPU")
+        (label :class "resource-percentage" :text "${current-cpu}%")
         (progress :class "cpu-bar"
                :flipped true
                :value current-cpu
+               :orientation "vertical")))
+
+;; GPU Bar ;;
+(defwidget gpu-bar[]
+    (box  :class "gpu-bar"
+          :tooltip "GPU usage: ${current-gpu}%"
+          :orientation "vertical"
+          :space-evenly "false"
+          :spacing "2"
+        (label :class "resource-label" :text "GPU")
+        (label :class "resource-percentage" :text "${current-gpu}%")
+        (progress :class "gpu-bar"
+               :flipped true
+               :value current-gpu
+               :orientation "vertical")))
+
+;; VRAM Bar ;;
+(defwidget vram-bar[]
+    (box  :class "vram-bar"
+          :tooltip "VRAM: ${current-vram-detail}"
+          :orientation "vertical"
+          :space-evenly "false"
+          :spacing "2"
+        (label :class "resource-label" :text "VRM")
+        (label :class "resource-percentage" :text "${current-vram}%")
+        (progress :class "vram-bar"
+               :flipped true
+               :value current-vram
                :orientation "vertical")))
 
 
@@ -50,8 +78,8 @@
           :orientation "vertical"
           :space-evenly "false"
           :spacing "2"
-        (button :class "battery-bar-icon" "BAT")
-        (button :class "battery-bar-percentage" "${current-battery}%")
+        (label :class "resource-label" :text "BAT")
+        (label :class "resource-percentage" :text "${current-battery}%")
         (progress :class "battery-bar"
                :flipped true
                :value current-battery
@@ -65,11 +93,26 @@
           :orientation "vertical"
           :space-evenly "false"
           :spacing "2"
-      (button :class "memory-bar-icon" "MEM")
-          (button :class "memory-bar-percentage" "${current-memory}%")
+        (label :class "resource-label" :text "MEM")
+        (label :class "resource-percentage" :text "${current-memory}%")
         (progress :class "memory-bar"
                :flipped true
                :value current-memory
+               :orientation "vertical")))
+
+
+;; Power Bar ;;
+(defwidget power-bar[]
+    (box  :class "power-bar"
+          :tooltip "Power Draw: ${current-power-draw}"
+          :orientation "vertical"
+          :space-evenly "false"
+          :spacing "2"
+        (label :class "resource-label" :text "PWR")
+        (label :class "resource-percentage" :text "${current-power-draw}")
+        (progress :class "power-bar"
+               :flipped true
+               :value current-power-percent
                :orientation "vertical")))
 
 
@@ -78,28 +121,29 @@
   (eventbox
        :cursor "pointer"
   (box :class "resources"
-       :orientation "horizontal"
+       :orientation "vertical"
        :space-evenly "false"
-       :halign "start"
-       :vexpand "false"
-       :hexpand "false"
-       (cpu-bar)
-       (temperature-bar)
-       (memory-bar)
-       (storage-bar)
-       (battery-bar))))
+       :spacing 10
+       (box :orientation "horizontal"
+            :space-evenly "true"
+            (cpu-bar)
+            (gpu-bar)
+            (memory-bar)
+            (vram-bar))
+       (box :orientation "horizontal"
+            :space-evenly "true"
+            (temperature-bar)
+            (storage-bar)
+            (battery-bar)
+            (power-bar)))))
 
 ;; resource-monitor ;;
 (defwindow resource-monitor
-  :monitor '[1, 0]'
+  :monitor 0
   :geometry (geometry :x "0.8%"
-                      :y "175px"
-                      :width "10%"
-                      :height "0%"
+                      :y "170px"
                       :anchor "top left")
   :stacking "fg"
   :exclusive "false"
   :focusable "false"
   (resources))
-
-

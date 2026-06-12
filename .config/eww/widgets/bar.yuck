@@ -48,30 +48,11 @@
             :cursor "pointer"
     (box  :orientation "horizontal"
           :space-evenly "false"
-      (button :class "launcher"
-              :onclick "~/.config/eww/scripts/app-launcher.sh" "󰣇")
-      (revealer :transition "slideleft"
+      (button :class "launcher" "󰣇")
+      (revealer :transition "slideright"
                 :reveal launcher
                 :duration "300ms"
-        (box  :class "powermenu"
-              :orientation "horizontal"
-              :space-evenly "true"
-              :spacing 24
-          (button :class "shutdown"
-                  :tooltip "Power Off"
-                  :onclick "shutdown now" "")
-          (button :class "lock"
-                  :tooltip "Lock"
-                  :onclick "~/.config/eww/scripts/lock.sh" "")
-          (button :class "reboot"
-                  :tooltip "Reboot"
-                  :onclick "reboot" "")
-          (button :class "exit"
-                  :tooltip "Exit"
-                  :onclick "killall Hyprland" "")
-          (button :class "suspend"
-                  :tooltip "Suspend"
-                  :onclick "systemctl suspend" ""))))))
+        (systray :orientation "h" :icon-size 16 :spacing 6 :class "systray")))))
 
 ;; Clock ;;
 (defwidget clock []
@@ -294,7 +275,15 @@
         :vexpand "false"
         :hexpand "false"
     (launcher)
-    (workspaces)))
+    (workspaces)
+    (box :class "app-tray"
+         :orientation "horizontal"
+         :space-evenly "false"
+         :spacing "5"
+      (for app in active-apps
+        (button :class "app-icon"
+                :tooltip "${app.class}"
+          "${app.icon}")))))
 
 ;; Right Group ;;
 (defwidget right []
