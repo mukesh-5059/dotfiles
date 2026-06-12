@@ -24,4 +24,12 @@ swaync-client -rs
 killall swayosd-server && swayosd-server &
 killall hyprpaper
 hyprpaper &
+
+# Restart Conky to capture the updated wallpaper pixmap
+if pgrep -x conky >/dev/null; then
+    killall conky
+    sleep 0.5
+    conky -c ~/modified-zenities/.config/conky/conky_sidebar.conf &
+fi
+
 echo "Done."
