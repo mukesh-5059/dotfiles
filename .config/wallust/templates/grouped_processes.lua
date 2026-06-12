@@ -288,7 +288,9 @@ end
 
 -- 8. Groups processes and formats output
 function conky_get_grouped_processes(sort_by, limit)
-    sort_by = sort_by or "cpu"
+    local original_sort = sort_by or "cpu"
+    local sort_key = original_sort
+    if sort_key == "mem" then sort_key = "rss" end
     limit = tonumber(limit) or 4
 
     local processes, pids = fetch_processes()
@@ -320,7 +322,7 @@ function conky_get_grouped_processes(sort_by, limit)
 
     local list = {}
     for _, g in pairs(groups) do table.insert(list, g) end
-    table.sort(list, function(a, b) return (a[sort_by] or 0) > (b[sort_by] or 0) end)
+    table.sort(list, function(a, b) return (a[sort_key] or 0) > (b[sort_key] or 0) end)
 
     local function fmem(k)
         if k >= 1048576 then return string.format("%.1fG", k/1048576)
@@ -332,9 +334,19 @@ function conky_get_grouped_processes(sort_by, limit)
     for i = 1, math.min(#list, limit) do
         local g = list[i]
         local name = #g.name > 12 and g.name:sub(1,11).."…" or g.name
-        local val = (sort_by == "rss") and fmem(g.rss) or string.format("%.1f%%", g[sort_by])
-        local extra = (sort_by == "gpu") and fmem(g.vram) or fmem(g.rss)
-        table.insert(lines, string.format("${goto 16}%-12s${goto 112}%7s${alignr}%5s  ", name, val, extra))
+        
+        local val_str = ""
+        local extra_str = ""
+        
+        if sort_key == "gpu" then
+            val_str = string.format("%.1f%%", g.gpu)
+            extra_str = fmem(g.vram)
+        else -- CPU or MEM sort
+            val_str = string.format("%.1f%%", g.cpu)
+            extra_str = fmem(g.rss)
+        end
+        
+        table.insert(lines, string.format("${goto 16}%-12s${goto 112}%7s${alignr}%5s  ", name, val_str, extra_str))
     end
     return conky_parse and conky_parse(table.concat(lines, "\n")) or table.concat(lines, "\n")
 end
