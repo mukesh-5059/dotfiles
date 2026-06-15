@@ -3,26 +3,26 @@
  */
 
 /* --- Colors from user-provided eww/colors.scss --- */
- @define-color background color-mix(in srgb, #252929, #000000 75%);
- @define-color foreground #FAF9EE;
- @define-color cursor #ABC1B1;
+ @define-color background color-mix(in srgb, #1C1B1F, #000000 75%);
+ @define-color foreground #ECE6F5;
+ @define-color cursor #8E8CB1;
 
- @define-color color0 #505554;
- @define-color color1 #8E7E6A;
- @define-color color2 #6F897E;
- @define-color color3 #5C9CB6;
- @define-color color4 #899382;
- @define-color color5 #9F934E;
- @define-color color6 #B5B39A;
- @define-color color7 #F0EEDE;
- @define-color color8 #A8A79B;
- @define-color color9 #A68F73;
- @define-color color10 #739989;
- @define-color color11 #49B2DC;
- @define-color color12 #A6B49C;
- @define-color color13 #D4C468;
- @define-color color14 #F1EECD;
- @define-color color15 #F0EEDE;
+ @define-color color0 #47464B;
+ @define-color color1 #4D4B59;
+ @define-color color2 #555779;
+ @define-color color3 #6E6898;
+ @define-color color4 #8D78AB;
+ @define-color color5 #778AA0;
+ @define-color color6 #9789A9;
+ @define-color color7 #DCD3E8;
+ @define-color color8 #9A93A2;
+ @define-color color9 #535063;
+ @define-color color10 #5E618E;
+ @define-color color11 #8078B7;
+ @define-color color12 #9673C7;
+ @define-color color13 #698AB0;
+ @define-color color14 #C9B7E1;
+ @define-color color15 #DCD3E8;
 
 /* --- Semantic Mapping --- */
  @define-color background-color @background;
