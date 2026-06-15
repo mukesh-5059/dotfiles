@@ -139,7 +139,7 @@
 ;; device-control ;;
 (defwindow device-control
   :monitor 0
-  :geometry (geometry :x "0.8%"
+  :geometry (geometry :x "0.6%"
                       :y "16px"
                       :width "10%"
                       :height "0%"

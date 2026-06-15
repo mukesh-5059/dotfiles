@@ -25,6 +25,17 @@ killall swayosd-server && swayosd-server &
 killall hyprpaper
 hyprpaper &
 
+#if pgrep -x nautilus >/dev/null; then
+#    nautilus -q
+#fi
+
+# Update Papirus folder icon colors to match the wallpaper
+#SCRIPTPATH="$(cd "$(dirname "$0")" && pwd)"
+#if hash papirus-folders 2>/dev/null; then
+#    FOLDER_COLOR=$(python3 "$SCRIPTPATH/match_folder_color.py")
+#    echo "Updating folder icons to match: $FOLDER_COLOR..."
+#    papirus-folders -C "$FOLDER_COLOR" --theme Papirus-Dark
+#fi
 # Restart Conky to capture the updated wallpaper pixmap
 if pgrep -x conky >/dev/null; then
     killall conky

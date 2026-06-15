@@ -10,8 +10,8 @@ eww.target = '~/.config/eww/colors.scss'
 rofi.template = 'rofi-dark-colors.rasi'
 rofi.target = '~/.config/rofi/rofi-dark-colors.rasi'
 
-#kitty.template = 'kitty-colors.conf'
-#kitty.target = '~/.config/kitty/kitty-colors.conf'
+kitty.template = 'kitty-colors.conf'
+kitty.target = '~/.config/kitty/kitty-colors.conf'
 
 swaync.template = 'swaync-colors.css'
 swaync.target = '~/.config/swaync/style.css'
