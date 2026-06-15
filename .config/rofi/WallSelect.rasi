@@ -11,8 +11,7 @@ configuration {
 
 window {
     enabled:                     true;
-    fullscreen:                  false;
-    width:                       100%;
+    fullscreen:                  true;
     transparency:                "real";
     cursor:                      "default";
     spacing:                     0px;
@@ -20,13 +19,18 @@ window {
     border:                      0px;
     border-radius:               0px;
     border-color:                transparent;
-    background-color:            transparent;
+    background-color:            rgba(0, 0, 0, 0.6); /* Dims the screen */
 }
 
 mainbox {
     enabled:                     true;
-    children:                    [ "listview" ];
-    background-color:            @background;
+    children:                    [ "dummy", "listview", "dummy" ];
+    background-color:            transparent;
+}
+
+dummy {
+    expand:                      true;
+    background-color:            transparent;
 }
 
 listview {
@@ -40,17 +44,17 @@ listview {
     scrollbar:                   false;
     layout:                      vertical;
     reverse:                     false;
-    fixed-height:                true;
+    fixed-height:                false;
     fixed-columns:               true;
     cursor:                      "default";
-    background-color:            transparent;
+    background-color:            @background; /* Solid bar at the bottom */
     text-color:                  @normal-foreground;
 }
 
 element {
     enabled:                     true;
-    orientation:                 horizontal;
-    spacing:                     0px;
+    orientation:                 vertical;
+    spacing:                     1px;
     padding:                     3px;
     border-radius:               20px;
     cursor:                      pointer;
@@ -58,10 +62,14 @@ element {
     text-color:                  @normal-foreground;
 }
 
-@media(max-aspect-ratio: 1.8) {
-    element {
-        orientation:             vertical;
-    }
+element normal.normal {
+    background-color:            transparent;
+    text-color:                  @normal-foreground;
+}
+
+element alternate.normal {
+    background-color:            transparent;
+    text-color:                  @normal-foreground;
 }
 
 element selected.normal {

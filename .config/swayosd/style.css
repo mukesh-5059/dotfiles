@@ -3,26 +3,26 @@
   font-family: "Iosevka Nerd Font";
 }
 
-@define-color theme_bg_color #151519;
-@define-color theme_fg_color #E1E0E9;
+@define-color theme_bg_color #252929;
+@define-color theme_fg_color #FAF9EE;
 
 /* Colors */
-@define-color color0 #404044;
-@define-color color1 #464852;
-@define-color color2 #655477;
-@define-color color3 #5D6257;
-@define-color color4 #56656F;
-@define-color color5 #74788F;
-@define-color color6 #7E7D91;
-@define-color color7 #CBCAD8;
-@define-color color8 #8E8D97;
-@define-color color9 #4A4C5B;
-@define-color color10 #745D8C;
-@define-color color11 #687060;
-@define-color color12 #607381;
-@define-color color13 #7B80A2;
-@define-color color14 #A8A6C1;
-@define-color color15 #CBCAD8;
+@define-color color0 #505554;
+@define-color color1 #8E7E6A;
+@define-color color2 #6F897E;
+@define-color color3 #5C9CB6;
+@define-color color4 #899382;
+@define-color color5 #9F934E;
+@define-color color6 #B5B39A;
+@define-color color7 #F0EEDE;
+@define-color color8 #A8A79B;
+@define-color color9 #A68F73;
+@define-color color10 #739989;
+@define-color color11 #49B2DC;
+@define-color color12 #A6B49C;
+@define-color color13 #D4C468;
+@define-color color14 #F1EECD;
+@define-color color15 #F0EEDE;
 
 window#osd {
   border-radius: 24px;

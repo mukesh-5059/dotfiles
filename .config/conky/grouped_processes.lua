@@ -4,7 +4,7 @@
 require 'cairo'
 require 'cairo_xlib'
 
-local wallpaper_bg = "#151519"
+local wallpaper_bg = "#252929"
 
 local function hex_to_rgb(hex)
     hex = hex:gsub("#", "")
