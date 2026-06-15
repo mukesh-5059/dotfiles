@@ -19,4 +19,4 @@ This rice utilized pywal to create custom colorscemes depending on the wallpaper
 ## Credits
 - Dotfiles: **[Zenities](https://github.com/dusklinux/dusky)**
 - Rofi scripts: **[gh0stzk](https://github.com/gh0stzk/dotfiles)**
-- Keyboard sounds: **[dusky](https://github.com/dusklinux/dusky)**
+- Keyboard sounds and other scripts: **[dusky](https://github.com/dusklinux/dusky)**
