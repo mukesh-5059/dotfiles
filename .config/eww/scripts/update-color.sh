@@ -1,7 +1,7 @@
 #!/bin/bash
 # Variables
 SELECTED_WALLPAPER=$1
-WALLPAPER_DIR="$HOME/wallpapers"
+WALLPAPER_DIR="$HOME/wallpapers/wallpapers"
 # Ensure the wallpaper exists
 if [ ! -f "$WALLPAPER_DIR/$SELECTED_WALLPAPER.jpg" ]; then
     echo "Error: Wallpaper not found: $SELECTED_WALLPAPER"

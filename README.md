@@ -3,6 +3,8 @@
 ![](screenshots/hero-new.png)
 ![](screenshots/tmux-ncspot-cava.png)
 
+This repository is a customized fork of [hayyaoe/zenities](https://github.com/hayyaoe/zenities).
+
 Thank you so much for visiting my Hyprland rice. I'm relatively new to ricing, and while it's no where near perfect, I've put a lot of care into it. This rice is inspired by so many awesome people's work, though I regret I can't list everyone by name
 
 I hope you enjoy it, and feel free to use this rice!
@@ -65,13 +67,13 @@ This installation script **only works on Arch Linux** and requires **Hyprland** 
 
     ```bash
     cd $HOME
-    git clone https://github.com/hayyaoe/zenities
+    git clone https://github.com/mukesh-5059/dotfiles
     ```
 
 3. Navigate to the project directory:
 
     ```bash
-    cd zenities
+    cd dotfiles
     ```
 
 4. Run the installation script:
@@ -82,7 +84,7 @@ This installation script **only works on Arch Linux** and requires **Hyprland** 
 
 ---
 
-For more details or issues, please visit the repository’s [issues page](https://github.com/hayyaoe/zenities/issues).
+For more details or issues, please visit the original repository’s [issues page](https://github.com/hayyaoe/zenities/issues) or this fork's [issues page](https://github.com/mukesh-5059/dotfiles/issues).
 
 ---
 
@@ -206,6 +208,6 @@ This rice utilized pywal to create custom colorscemes depending on the wallpaper
 - **[saimoomedits](https://github.com/saimoomedits/eww-widgets/tree/main)**
 - **[Vimjoyer](https://www.youtube.com/@vimjoyer)**
 
-## Star History
+## Star History (Original Repository)
 
 [![Star History Chart](https://api.star-history.com/svg?repos=hayyaoe/zenities&type=Date)](https://www.star-history.com/#hayyaoe/zenities&Date)

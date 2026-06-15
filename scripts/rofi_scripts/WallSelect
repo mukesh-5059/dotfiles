@@ -24,7 +24,7 @@
 # =============================================================
 
 # Set some variables
-wall_dir="$HOME/modified-zenities/wallpapers"
+wall_dir="$HOME/wallpapers/wallpapers"
 cacheDir="$HOME/.cache/wallselect"
 
 # Create cache dir if not exists
@@ -103,9 +103,9 @@ if [ -n "$wall_selection" ]; then
     SYMLINK_LOCK_CONFIG="$HOME/.config/hypr/hyprlock.conf"
     TARGET_FILE=$(readlink -f "$SYMLINK_CONFIG_FILE")
     sed -i -e "s|monitor = .*|monitor = $MONITOR|" "$TARGET_FILE"
-    sed -i -e "s|path = .*|path = \$HOME/wallpapers/$wall_selection|" "$TARGET_FILE"
+    sed -i -e "s|path = .*|path = \$HOME/wallpapers/wallpapers/$wall_selection|" "$TARGET_FILE"
     TARGET_FILE2=$(readlink -f "$SYMLINK_LOCK_CONFIG")
-    sed -i -e "s|path = .*|path = \$HOME/wallpapers/$wall_selection|" "$TARGET_FILE2"
+    sed -i -e "s|path = .*|path = \$HOME/wallpapers/wallpapers/$wall_selection|" "$TARGET_FILE2"
     
         # Call the user's update-color.sh script, passing wallpaper name without the extension.
     full_wallpaper_path="${wall_dir}/${wall_selection}"

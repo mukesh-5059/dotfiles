@@ -1,4 +1,4 @@
-WALLPAPER_DIR="$HOME/wallpapers"
+WALLPAPER_DIR="$HOME/wallpapers/wallpapers"
 
 SELECTED_WALLPAPER=$(ls "$WALLPAPER_DIR" | rofi -dmenu -replace -config ~/.config/rofi/config-wallpaper.rasi -p "∂" )
  
@@ -12,11 +12,11 @@ if [ -n "$SELECTED_WALLPAPER" ]; then
    TARGET_FILE=$(readlink -f "$SYMLINK_CONFIG_FILE")
    TARGET_FILE2=$(readlink -f "$SYMLINK_LOCK_CONFIG")
 
-   wal -i "$HOME/wallpapers/$SELECTED_WALLPAPER"
+   wal -i "$HOME/wallpapers/wallpapers/$SELECTED_WALLPAPER"
 
-   sed -i -e "s|preload = .*|preload = $HOME/wallpapers/$SELECTED_WALLPAPER|" \
-          -e "s|wallpaper = ,.*|wallpaper = ,$HOME/wallpapers/$SELECTED_WALLPAPER|" "$TARGET_FILE"
-   sed -i -e "s|path = .*|path = $HOME/wallpapers/$SELECTED_WALLPAPER|" "$TARGET_FILE2"
+   sed -i -e "s|preload = .*|preload = $HOME/wallpapers/wallpapers/$SELECTED_WALLPAPER|" \
+          -e "s|wallpaper = ,.*|wallpaper = ,$HOME/wallpapers/wallpapers/$SELECTED_WALLPAPER|" "$TARGET_FILE"
+   sed -i -e "s|path = .*|path = $HOME/wallpapers/wallpapers/$SELECTED_WALLPAPER|" "$TARGET_FILE2"
 
     killall hyprpaper
     hyprpaper
