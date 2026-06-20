@@ -320,7 +320,7 @@
         :vexpand "false"
         :hexpand "false"
     (left)
-    (center)
+ ;; (center) ;;
     (right)))
 
 ;;;;;;;;;;;;;;;;;;;;

@@ -2,6 +2,8 @@
   background-color: mix($background, $color1, 90%);
   padding: 5px;
   border-radius: 12px;
+  border: 1px solid mix($background, $color1, 80%);
+  border-bottom: 1.5px solid mix($background, $color1, 45%);
 }
 
 .launcher {
